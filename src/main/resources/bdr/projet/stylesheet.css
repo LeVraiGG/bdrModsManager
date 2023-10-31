@@ -37,11 +37,19 @@
 }
 
 #l-welcome {
-    -fx-background-color: #414141;
-    -fx-text-fill: #FFFFFF;
-    -fx-font: bold;
+
+}
+
+#l-mods {
+
 }
 
 #lv-mods{
 
+}
+
+.l {
+    -fx-background-color: #414141;
+    -fx-text-fill: #FFFFFF;
+    -fx-font: bold;
 }

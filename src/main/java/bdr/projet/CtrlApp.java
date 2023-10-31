@@ -30,17 +30,22 @@ public class CtrlApp {
     private Tab t_demo_view;
     @FXML
     private Label l_welcome;
-
+    @FXML
+    private Label l_mods;
     @FXML
     private ListView<String> lv_mods;
 
     @FXML
     protected void onHelloButtonClick() {
         initView();
+
         l_welcome.setText(testDb());
+        tp.getSelectionModel().select(t_demo_view);
     }
 
     void initView() {
+        setCSS();
+
         ArrayList<String> initValues = new ArrayList<>();
         initValues.add("Bontania");
         initValues.add("Optifine");
@@ -60,8 +65,6 @@ public class CtrlApp {
         ObservableList<String> current = lv_mods.getItems();
         current.addAll(initValues);
         lv_mods.setItems(current);
-
-        setCSS();
     }
 
     void setCSS() {
@@ -75,6 +78,7 @@ public class CtrlApp {
                 l_welcome.setId("custom-css-id");
          */
 
+        //set id
         ap_main.setId("ap.main");
         menu.setId("menu");
         tp.setId("tp");
@@ -83,7 +87,12 @@ public class CtrlApp {
         t_manage_db.setId("t-manage-db");
         t_demo_view.setId("t-demo-view");
         l_welcome.setId("l-welcome");
+        l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
+
+        //set classes
+        l_welcome.getStyleClass().add("l");
+        l_mods.getStyleClass().add("l");
     }
 
     String testDb() {
