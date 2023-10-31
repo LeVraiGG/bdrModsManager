@@ -1,0 +1,47 @@
+.custom-css-class {
+    -fx-font: 16px "Serif";
+    -fx-padding: 10;
+    -fx-background-color: #CCFF99;
+}
+
+#custom-css-id {
+    -fx-font: bold italic 20pt "Arial";
+    -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
+}
+
+#ap-main {}
+
+#menu {
+
+}
+
+#tp {
+    -fx-background-color: #414141;
+
+}
+
+#t-home {
+
+}
+
+#t-collections {
+
+}
+
+#t-manage-db {
+
+}
+
+#t-demo-view {
+
+}
+
+#l-welcome {
+    -fx-background-color: #414141;
+    -fx-text-fill: #FFFFFF;
+    -fx-font: bold;
+}
+
+#lv-mods{
+
+}
