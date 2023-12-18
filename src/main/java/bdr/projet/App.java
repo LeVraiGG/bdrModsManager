@@ -12,12 +12,11 @@ import static bdr.projet.helpers.Constances.*;
 public class App extends Application {
 
 
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Hello!");
+        stage.setTitle(APP_TITLE);
         scene.getStylesheets().add(URL_CSS_SHEET);
         stage.setScene(scene);
         stage.show();

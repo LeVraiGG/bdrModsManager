@@ -1,6 +1,7 @@
 package bdr.projet.helpers;
 
 public class Constances {
+    public final static String APP_TITLE = "SUPER MODS MANAGER 2000";
     //URL
     public final static String URL_DB_MODS = "jdbc:postgresql://localhost:5432/mods";
     public final static String URL_CSS_SHEET = "/bdr/projet/stylesheet.css";

@@ -1,4 +1,4 @@
-package labo4.gonin_stadlin.dai23_labo4.helpers;
+package bdr.projet.helpers;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -107,9 +107,6 @@ public class Popups {
         });
 
         Optional<File> result = dialog.showAndWait();
-
-
-
 
 
         return result.orElse(null);
