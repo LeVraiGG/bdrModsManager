@@ -21,17 +21,41 @@ public class PostgesqlJDBC {
         db = DriverManager.getConnection(url, props);
     }
 
-    public void doRequest(String request) throws SQLException {
-        int foovalue = 500;
-        PreparedStatement st = db.prepareStatement(request);
-        ResultSet rs = st.executeQuery();
-        while (rs.next()) {
+    public boolean isConnect(){
+        return db != null;
+    }
 
-            //TODO
-            System.out.print("Column 1 returned ");
+    public PreparedStatement getPrepareStatement(String request) throws SQLException { //could do variable parameter but would complexity the code for nothing
+        return db.prepareStatement(request);
+    }
+
+    public ResultSet R(PreparedStatement request) throws SQLException {
+        ResultSet rs = request.executeQuery();
+
+        /*while (rs.next()) {
+            System.out.print("Column 1 returned "); //TODO RESOLVE THAT ISSUE
             System.out.println(rs.getString(1));
         }
+
         rs.close();
-        st.close();
+        request.close();*/
+        return  rs;
+    }
+
+    public int CUD(PreparedStatement request) throws SQLException {
+        int res = request.executeUpdate();
+        request.close();
+        return res;
+    }
+
+    public boolean LDD(PreparedStatement request) throws SQLException {
+        boolean res = request.execute();
+        request.close();
+        return res;
+    }
+
+    public void disconnect() throws SQLException {
+        db.close();
+        db = null;
     }
 }

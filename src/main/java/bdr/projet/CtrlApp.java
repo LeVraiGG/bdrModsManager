@@ -1,6 +1,7 @@
 package bdr.projet;
 
 import bdr.projet.helpers.PostgesqlJDBC;
+import bdr.projet.worker.DbWrk;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -35,35 +36,52 @@ public class CtrlApp {
     @FXML
     private ListView<String> lv_mods;
 
+    private PostgesqlJDBC mods;
+
+    @FXML
+    protected void quit() {
+        if (mods == null) return;
+
+        try {
+            mods.disconnect();
+        } catch (SQLException ignored) {
+        }
+    }
+
     @FXML
     protected void onHelloButtonClick() {
+        l_welcome.setText(connectDb());
         initView();
 
-        l_welcome.setText(testDb());
         tp.getSelectionModel().select(t_demo_view);
     }
 
     void initView() {
         setCSS();
-
-        ArrayList<String> initValues = new ArrayList<>();
-        initValues.add("Bontania");
-        initValues.add("Optifine");
-        initValues.add("Lorem");
-        initValues.add("Ipsum");
-        initValues.add("Titi");
-        initValues.add("Toto");
-        initValues.add("Lulu");
-        initValues.add("Lala");
-        initValues.add("Lolo");
-        initValues.add("Lili");
-        initValues.add("Lola");
-        initValues.add("Lilu");
-        initValues.add("Tito");
-
+        ArrayList<String> modsName;
+        
+        if(mods == null || !mods.isConnect()) {
+            modsName = new ArrayList<>();
+            modsName.add("Bontania");
+            modsName.add("Optifine");
+            modsName.add("Lorem");
+            modsName.add("Ipsum");
+            modsName.add("Titi");
+            modsName.add("Toto");
+            modsName.add("Lulu");
+            modsName.add("Lala");
+            modsName.add("Lolo");
+            modsName.add("Lili");
+            modsName.add("Lola");
+            modsName.add("Lilu");
+            modsName.add("Tito");
+        } else {
+            modsName = new DbWrk(mods).getModsNames();
+            if (modsName == null) modsName = new ArrayList<>();
+        }
 
         ObservableList<String> current = lv_mods.getItems();
-        current.addAll(initValues);
+        current.addAll(modsName);
         lv_mods.setItems(current);
     }
 
@@ -95,8 +113,8 @@ public class CtrlApp {
         l_mods.getStyleClass().add("l");
     }
 
-    String testDb() {
-        PostgesqlJDBC mods = new PostgesqlJDBC(URL_DB_MODS, "bdr", "bdr");
+    String connectDb() {
+        mods = new PostgesqlJDBC(URL_PSQL+DB_NAME, DB_USER, DB_PASSWORD);
         try {
             mods.connect();
             return MSG_DB_CONNECT_SUCCESS;

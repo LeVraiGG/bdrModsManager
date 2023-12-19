@@ -51,5 +51,5 @@
 .l {
     -fx-background-color: #414141;
     -fx-text-fill: #FFFFFF;
-    -fx-font: bold;
+    -fx-font-style: bold;
 }

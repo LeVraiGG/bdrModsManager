@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  bmm-db: #thanks to : https://github.com/bitnami/containers/blob/main/bitnami/postgresql/README.md
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bitnami/postgresql:latest
+    container_name: bmm-db
+    environment:
+      - POSTGRESQL_USERNAME=u_app
+      - POSTGRESQL_PASSWORD=super_secret
+      - POSTGRESQL_DATABASE=db_app
+    volumes:
+      - bmm-psql:/bitnami/postgresql
+    ports:
+      - 5432:5432
+
+volumes:
+  bmm-psql:
+
+#docker-compose up --detach
+#docker exec -it bmm-db psql -U u_app -d db_app

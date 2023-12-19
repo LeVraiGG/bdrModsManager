@@ -10,17 +10,13 @@
         <menus>
             <Menu mnemonicParsing="false" text="Menu">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
+                    <MenuItem mnemonicParsing="false" text="Quit" onAction="#quit" />
                 </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Account">
                 <items>
+                    <MenuItem mnemonicParsing="false" text="Disconnect" />
                     <MenuItem mnemonicParsing="false" text="Delete" />
-                </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Quit">
-                <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
                 </items>
             </Menu>
         </menus>
