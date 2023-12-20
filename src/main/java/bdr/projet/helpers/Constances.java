@@ -20,5 +20,6 @@ public class Constances {
 
     //DB REQUEST
     public final static String DB_RQ_GET_MODS = "SELECT fk_game, name FROM mod;";
+    public final static String DB_RQ_GET_GAMES = "SELECT name FROM game;";
 
 }

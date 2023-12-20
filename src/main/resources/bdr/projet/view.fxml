@@ -10,11 +10,12 @@
         <menus>
             <Menu mnemonicParsing="false" text="Menu">
                 <items>
-                    <MenuItem mnemonicParsing="false" text="Quit" onAction="#quit" />
+                    <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
                 </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Account">
                 <items>
+                    <MenuItem mnemonicParsing="false" onAction="#connect" text="Connect" />
                     <MenuItem mnemonicParsing="false" text="Disconnect" />
                     <MenuItem mnemonicParsing="false" text="Delete" />
                 </items>
@@ -46,6 +47,19 @@
                                  <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="35.0" layoutY="-26.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
+                           <HBox prefHeight="100.0" prefWidth="200.0">
+                              <children>
+                                 <HBox prefHeight="132.0" prefWidth="301.0">
+                                    <children>
+                                       <Label fx:id="l_games" text="Game">
+                                          <padding>
+                                             <Insets right="10.0" />
+                                          </padding>
+                                       </Label>
+                                       <ComboBox fx:id="cmb_game" prefWidth="150.0" />
+                                    </children>
+                                 </HBox>
+                              </children></HBox>
                                 </children>
                             </GridPane>
                         </children>
@@ -55,7 +69,6 @@
             <Tab fx:id="t_collections" text="Collections">
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                        <Button layoutX="76.0" layoutY="88.0" onAction="#onHelloButtonClick" text="Hello!" AnchorPane.leftAnchor="276.0" AnchorPane.rightAnchor="276.0" AnchorPane.topAnchor="180.0" />
                     </AnchorPane>
                 </content>
             </Tab>

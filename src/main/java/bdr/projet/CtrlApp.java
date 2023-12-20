@@ -1,7 +1,5 @@
 package bdr.projet;
 
-import bdr.projet.helpers.PostgesqlJDBC;
-import bdr.projet.worker.DbWrk;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,6 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constances.*;
+
+import bdr.projet.beans.*;
+import bdr.projet.helpers.PostgesqlJDBC;
+import bdr.projet.worker.DbWrk;
 
 public class CtrlApp {
 
@@ -34,55 +36,50 @@ public class CtrlApp {
     @FXML
     private Label l_mods;
     @FXML
-    private ListView<String> lv_mods;
+    private Label l_games;
+    @FXML
+    private ListView<Mod> lv_mods;
+    @FXML
+    private ComboBox<Game> cmb_game;
 
-    private PostgesqlJDBC mods;
+    private PostgesqlJDBC jdbc;
 
     @FXML
     protected void quit() {
-        if (mods == null) return;
+        if (jdbc == null) return;
 
         try {
-            mods.disconnect();
+            jdbc.disconnect();
         } catch (SQLException ignored) {
         }
     }
 
     @FXML
-    protected void onHelloButtonClick() {
-        l_welcome.setText(connectDb());
+    protected void connect() {
         initView();
-
-        tp.getSelectionModel().select(t_demo_view);
+        //connect user popups and all of that
     }
 
     void initView() {
-        setCSS();
-        ArrayList<String> modsName;
-        
-        if(mods == null || !mods.isConnect()) {
-            modsName = new ArrayList<>();
-            modsName.add("Bontania");
-            modsName.add("Optifine");
-            modsName.add("Lorem");
-            modsName.add("Ipsum");
-            modsName.add("Titi");
-            modsName.add("Toto");
-            modsName.add("Lulu");
-            modsName.add("Lala");
-            modsName.add("Lolo");
-            modsName.add("Lili");
-            modsName.add("Lola");
-            modsName.add("Lilu");
-            modsName.add("Tito");
-        } else {
-            modsName = new DbWrk(mods).getModsNames();
-            if (modsName == null) modsName = new ArrayList<>();
-        }
+        setCSS(); //set the css
 
-        ObservableList<String> current = lv_mods.getItems();
-        current.addAll(modsName);
-        lv_mods.setItems(current);
+        l_welcome.setText(connectDb()); //try to connect to db and give a feedback
+
+        //if db connected set mods, games list
+        ArrayList<Mod> mods = new ArrayList<>();
+        if (jdbc != null && jdbc.isConnect()) {
+            DbWrk db = new DbWrk(jdbc);
+            var a = db.getGames();
+            cmb_game.getItems().setAll(db.getGames());
+            cmb_game.setValue(cmb_game.getItems().get(0));
+
+            mods = cmb_game.getItems().isEmpty()
+                    ? db.getMods()
+                    : db.getMods(cmb_game.getSelectionModel().getSelectedItem());
+        }
+        lv_mods.getItems().setAll(mods);
+
+        tp.getSelectionModel().select(t_demo_view); //set selected tab to demo view for let the user know the connection to db feedback
     }
 
     void setCSS() {
@@ -107,16 +104,19 @@ public class CtrlApp {
         l_welcome.setId("l-welcome");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
+        l_games.setId("l-mods");
+        cmb_game.setId("cmb-games");
 
         //set classes
         l_welcome.getStyleClass().add("l");
         l_mods.getStyleClass().add("l");
+        l_games.getStyleClass().add("l");
     }
 
     String connectDb() {
-        mods = new PostgesqlJDBC(URL_PSQL+DB_NAME, DB_USER, DB_PASSWORD);
+        jdbc = new PostgesqlJDBC(URL_PSQL + DB_NAME, DB_USER, DB_PASSWORD);
         try {
-            mods.connect();
+            jdbc.connect();
             return MSG_DB_CONNECT_SUCCESS;
         } catch (SQLException ex) {
             return MSG_DB_CONNECT_FAILURE;
