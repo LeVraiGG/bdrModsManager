@@ -16,7 +16,7 @@ public class Constances {
     //MSG
     public final static String MSG_DB_CONNECT_SUCCESS = "Successfully connected to the db :)";
     public final static String MSG_DB_CONNECT_FAILURE = "Failed to connect to the db :(";
-    public final static String MSG_EX_JDBC_NULL = "JDBC IS NULL!";
+    public final static String MSG_EX_JDBC_INVALID = "JDBC is null or not connected!";
 
     //DB REQUEST
     public final static String DB_RQ_GET_MODS = "SELECT fk_game, name FROM mod;";
