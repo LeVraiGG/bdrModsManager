@@ -23,9 +23,9 @@
         </menus>
     </MenuBar>
 
-    <TabPane fx:id="tp_home" layoutY="-6.0" prefHeight="327.0" prefWidth="346.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+    <TabPane fx:id="tp" layoutY="-6.0" prefHeight="327.0" prefWidth="346.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
         <tabs>
-            <Tab fx:id="tp" text="Home">
+            <Tab fx:id="t_home" text="Home">
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
@@ -40,17 +40,11 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                                    <ListView fx:id="lv_mods" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-                              <GridPane.margin>
-                                 <Insets left="5.0" right="5.0" />
-                              </GridPane.margin></ListView>
-                           <Label fx:id="l_mods" text="Mods" GridPane.valignment="BOTTOM">
-                              <GridPane.margin>
-                                 <Insets left="5.0" />
-                              </GridPane.margin></Label>
+                                    <ListView fx:id="lv_mods" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+                           <Label fx:id="l_mods" text="Mods" GridPane.valignment="BOTTOM" />
                            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                               <children>
-                                 <ImageView fitHeight="142.0" fitWidth="200.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="4.0" />
+                                 <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="35.0" layoutY="-26.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               </children>
                            </AnchorPane>
                            <HBox prefHeight="100.0" prefWidth="200.0">
@@ -58,14 +52,11 @@
                                  <HBox prefHeight="132.0" prefWidth="301.0">
                                     <children>
                                        <Label fx:id="l_games" text="Game">
-                                          <HBox.margin>
-                                             <Insets left="5.0" right="10.0" top="6.0" />
-                                          </HBox.margin>
+                                          <padding>
+                                             <Insets right="10.0" />
+                                          </padding>
                                        </Label>
-                                       <ComboBox fx:id="cmb_game" prefWidth="150.0">
-                                          <HBox.margin>
-                                             <Insets top="2.0" />
-                                          </HBox.margin></ComboBox>
+                                       <ComboBox fx:id="cmb_game" prefWidth="150.0" />
                                     </children>
                                  </HBox>
                               </children></HBox>
@@ -77,49 +68,8 @@
             </Tab>
             <Tab fx:id="t_collections" text="Collections">
                 <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="309.0" prefWidth="600.0">
-                  <children>
-                     <GridPane prefHeight="398.0" prefWidth="600.0">
-                       <columnConstraints>
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                       </columnConstraints>
-                       <rowConstraints>
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                       </rowConstraints>
-                        <children>
-                           <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-                              <GridPane.margin>
-                                 <Insets left="5.0" right="5.0" />
-                              </GridPane.margin></ListView>
-                           <Label text="Mods" GridPane.valignment="BOTTOM">
-                              <GridPane.margin>
-                                 <Insets left="5.0" />
-                              </GridPane.margin></Label>
-                           <AnchorPane GridPane.columnIndex="1">
-                              <children>
-                                 <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.599999999999994" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.60000000000002" AnchorPane.topAnchor="4.0" />
-                              </children>
-                           </AnchorPane>
-                           <HBox prefHeight="100.0" prefWidth="200.0">
-                              <children>
-                                 <Label text="Collection">
-                                    <HBox.margin>
-                                       <Insets left="5.0" right="10.0" top="6.0" />
-                                    </HBox.margin>
-                                 </Label>
-                                 <ComboBox prefWidth="150.0">
-                                    <HBox.margin>
-                                       <Insets top="2.0" />
-                                    </HBox.margin>
-                                 </ComboBox>
-                              </children>
-                           </HBox>
-                        </children>
-                     </GridPane>
-                  </children></AnchorPane>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    </AnchorPane>
                 </content>
             </Tab>
             <Tab fx:id="t_manage_db" text="Manage DB">

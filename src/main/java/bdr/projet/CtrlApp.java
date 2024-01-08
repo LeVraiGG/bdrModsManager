@@ -68,6 +68,7 @@ public class CtrlApp {
         ArrayList<Mod> mods = new ArrayList<>();
         if (jdbc != null && jdbc.isConnect()) {
             DbWrk db = new DbWrk(jdbc);
+            var a = db.getGames();
             cmb_game.getItems().setAll(db.getGames());
             cmb_game.setValue(cmb_game.getItems().get(0));
 
