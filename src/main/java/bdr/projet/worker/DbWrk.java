@@ -72,7 +72,10 @@ public class DbWrk {
             ResultSet rs = jdbc.R(request);
 
             while (rs.next()) { //TODO DEBUG
-                mods.add(new Mod(rs.getString(2), getGame(rs.getString(1))));
+                mods.add(new Mod(
+                        rs.getString(1), getGame(rs.getString(2)),
+                        rs.getString(3), rs.getString(4),
+                        rs.getString(5), rs.getInt(6)));
             }
 
             rs.close();

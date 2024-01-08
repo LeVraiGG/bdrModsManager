@@ -1,7 +1,14 @@
 package bdr.projet.beans;
 
+import javafx.scene.image.Image;
+
+import java.util.Objects;
+
+import static bdr.projet.helpers.Constances.URL_IMG_NOT_FOUND;
+
 public class Game {
     private String name;
+    private String logo;
 
     public Game(String name) {
         this.name = name;
@@ -18,6 +25,15 @@ public class Game {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Image getLogo() {
+        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm(); //TODO download image then -> logo == null ? URL_IMG_NOT_FOUND : logo);
+        return new Image(imgPath);
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     @Override

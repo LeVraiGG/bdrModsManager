@@ -3,6 +3,8 @@ package bdr.projet;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 import java.sql.SQLException;
@@ -40,6 +42,14 @@ public class CtrlApp {
     @FXML
     private ListView<Mod> lv_mods;
     @FXML
+    private ListView<String> lv_mod;
+    @FXML
+    private TextArea txa_mod;
+    @FXML
+    private ImageView imv_mod;
+    @FXML
+    private ImageView imv_game;
+    @FXML
     private ComboBox<Game> cmb_game;
 
     private PostgesqlJDBC jdbc;
@@ -69,17 +79,42 @@ public class CtrlApp {
         ArrayList<Mod> mods = new ArrayList<>();
         if (jdbc != null && jdbc.isConnect()) {
             DbWrk db = new DbWrk(jdbc);
-            var a = db.getGames();
             cmb_game.getItems().setAll(db.getGames());
             cmb_game.setValue(cmb_game.getItems().get(0));
 
             mods = cmb_game.getItems().isEmpty()
                     ? db.getMods()
                     : db.getMods(cmb_game.getSelectionModel().getSelectedItem());
+            cmb_game.setOnAction(actionEvent -> {
+                Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
+                lv_mods.getItems().setAll(db.getMods(gameSelected));
+                imv_game.setImage(gameSelected.getLogo());
+            });
+            imv_game.setImage(cmb_game.getSelectionModel().getSelectedItem().getLogo());
         }
+
         lv_mods.getItems().setAll(mods);
+        lv_mods.setOnMouseClicked(mouseEvent -> {
+            Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
+            lv_mod.getItems().setAll(screenshotsToString(modSelected.getScreenshots()));
+            lv_mod.setOnMouseClicked(mouseEvent1 -> {
+                String screenshotSelected = lv_mod.getSelectionModel().getSelectedItem();
+                imv_mod.setImage(screenshotSelected.equals("Screenshots:")
+                                ? modSelected.getLogo()
+                                : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
+            });
+            txa_mod.setText(modSelected.getDesciption() + "\n\nDownload at: " +modSelected.getDownloadLink()); //TODO <a>
+            imv_mod.setImage(modSelected.getLogo());
+        });
 
         tp.getSelectionModel().select(t_demo_view); //set selected tab to demo view for let the user know the connection to db feedback
+    }
+
+    private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
+        ArrayList<String> res = new ArrayList<>();
+        res.add("Screenshots:");
+        for (int i = 1; i <= screenshots.size(); i++) res.add(String.valueOf(i));
+        return res;
     }
 
     void setCSS() {
@@ -104,6 +139,10 @@ public class CtrlApp {
         l_welcome.setId("l-welcome");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
+        //lv_mod.setId("lv-mod");
+        //txa_mod.setId("txa-mod");
+        //imv_mod.setId("imv-mod");
+        //imv_game.setId("imv-game");
         l_games.setId("l-mods");
         cmb_game.setId("cmb-games");
 
