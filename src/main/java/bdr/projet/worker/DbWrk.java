@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static bdr.projet.helpers.Constances.*;
+import static bdr.projet.helpers.Constantes.*;
 
 public class DbWrk {
     PostgesqlJDBC jdbc;
@@ -50,9 +50,13 @@ public class DbWrk {
             ResultSet rs = jdbc.R(request);
 
             while (rs.next()) {
-                String gameName = rs.getString(1);
-                if (getGame(gameName) != null) continue; //TODO OR UPDATE
-                games.add(new Game(gameName));
+                Game g = new Game(rs.getString(1));
+                int i = games.indexOf(g);
+                if(i == -1){
+                    games.add(g);
+                }else{
+                    games.set(i, g);
+                }
             }
 
             rs.close();
@@ -72,10 +76,17 @@ public class DbWrk {
             ResultSet rs = jdbc.R(request);
 
             while (rs.next()) { //TODO DEBUG
-                mods.add(new Mod(
+                Mod m = new Mod(
                         rs.getString(1), getGame(rs.getString(2)),
                         rs.getString(3), rs.getString(4),
                         rs.getString(5), rs.getInt(6)));
+                        
+                int i = mods.indexOf(m);
+                if(i == -1){
+                    mods.add(m);
+                }else{
+                    mods.set(i, m);
+                }
             }
 
             rs.close();
