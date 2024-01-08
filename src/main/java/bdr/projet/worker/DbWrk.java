@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static bdr.projet.helpers.Constances.*;
+import static bdr.projet.helpers.Constantes.*;
 
 public class DbWrk {
     PostgesqlJDBC jdbc;

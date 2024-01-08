@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import static bdr.projet.helpers.Constances.*;
+import static bdr.projet.helpers.Constantes.*;
 
 public class App extends Application {
 

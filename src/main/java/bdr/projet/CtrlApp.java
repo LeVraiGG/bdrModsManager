@@ -1,6 +1,5 @@
 package bdr.projet;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -8,7 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static bdr.projet.helpers.Constances.*;
+import static bdr.projet.helpers.Constantes.*;
 
 import bdr.projet.beans.*;
 import bdr.projet.helpers.PostgesqlJDBC;

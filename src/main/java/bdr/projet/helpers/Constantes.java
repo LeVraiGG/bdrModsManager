@@ -1,9 +1,6 @@
 package bdr.projet.helpers;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
-public class Constances {
+public class Constantes {
     public final static String APP_TITLE = "SUPER MODS MANAGER 2000";
     public final static String DB_USER = "u_app";
     public final static String DB_PASSWORD = "super_secret";
