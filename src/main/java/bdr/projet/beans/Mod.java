@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static bdr.projet.helpers.Constances.URL_IMG_NOT_FOUND;
+import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
 
 public class Mod {
     private String name;

@@ -79,7 +79,7 @@ public class DbWrk {
                 Mod m = new Mod(
                         rs.getString(1), getGame(rs.getString(2)),
                         rs.getString(3), rs.getString(4),
-                        rs.getString(5), rs.getInt(6)));
+                        rs.getString(5), rs.getInt(6));
                         
                 int i = mods.indexOf(m);
                 if(i == -1){

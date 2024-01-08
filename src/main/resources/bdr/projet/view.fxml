@@ -23,7 +23,7 @@
         </menus>
     </MenuBar>
 
-    <TabPane fx:id="tp_home" layoutY="-6.0" prefHeight="327.0" prefWidth="346.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+    <TabPane fx:id="tp" layoutY="-6.0" prefHeight="327.0" prefWidth="346.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
         <tabs>
             <Tab fx:id="t_home" text="Home">
                 <content>
