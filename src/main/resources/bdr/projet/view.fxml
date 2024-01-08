@@ -29,7 +29,7 @@
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                            <GridPane layoutX="94.0" layoutY="66.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <GridPane layoutX="94.0" layoutY="66.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -79,22 +79,22 @@
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="309.0" prefWidth="600.0">
                   <children>
-                     <GridPane prefHeight="398.0" prefWidth="600.0">
+                     <GridPane prefHeight="398.0" prefWidth="600.0" AnchorPane.leftAnchor="5.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                        </columnConstraints>
                        <rowConstraints>
-                         <RowConstraints maxHeight="192.4" minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
-                         <RowConstraints maxHeight="242.39999618530274" minHeight="10.0" prefHeight="157.0" vgrow="SOMETIMES" />
-                         <RowConstraints maxHeight="245.4000305175781" minHeight="10.0" prefHeight="157.0" vgrow="SOMETIMES" />
+                         <RowConstraints maxHeight="192.4" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                         <RowConstraints maxHeight="242.39999618530274" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
+                         <RowConstraints maxHeight="245.4000305175781" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
                        </rowConstraints>
                         <children>
                            <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                               <GridPane.margin>
-                                 <Insets bottom="60.0" left="5.0" right="5.0" />
+                                 <Insets bottom="40.0" left="5.0" right="5.0" top="20.0" />
                               </GridPane.margin></ListView>
-                           <Label text="Mods in the collection" GridPane.valignment="BOTTOM">
+                           <Label text="Mods in the collection" GridPane.rowIndex="1" GridPane.valignment="TOP">
                               <GridPane.margin>
                                  <Insets left="5.0" />
                               </GridPane.margin></Label>
@@ -127,9 +127,9 @@
                                  <Insets bottom="7.0" />
                               </GridPane.margin>
                            </Button>
-                           <Button fx:id="btn_collect_remove" mnemonicParsing="false" prefHeight="26.0" prefWidth="60.0" text="Remove" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <Button fx:id="btn_collect_remove" mnemonicParsing="false" prefHeight="26.0" prefWidth="60.0" text="Remove" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                               <GridPane.margin>
-                                 <Insets top="80.0" />
+                                 <Insets bottom="7.0" />
                               </GridPane.margin>
                            </Button>
                            <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
