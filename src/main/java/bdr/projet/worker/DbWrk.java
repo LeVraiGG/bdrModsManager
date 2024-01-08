@@ -50,9 +50,13 @@ public class DbWrk {
             ResultSet rs = jdbc.R(request);
 
             while (rs.next()) {
-                String gameName = rs.getString(1);
-                if (getGame(gameName) != null) continue; //TODO OR UPDATE
-                games.add(new Game(gameName));
+                Game g = new Game(rs.getString(1));
+                int i = games.indexOf(g);
+                if(i == -1){
+                    games.add(g);
+                }else{
+                    games.set(i, g);
+                }
             }
 
             rs.close();
@@ -72,7 +76,13 @@ public class DbWrk {
             ResultSet rs = jdbc.R(request);
 
             while (rs.next()) { //TODO DEBUG
-                mods.add(new Mod(rs.getString(2), getGame(rs.getString(1))));
+                Mod m = new Mod(rs.getString(2), getGame(rs.getString(1)));
+                int i = mods.indexOf(m);
+                if(i == -1){
+                    mods.add(m);
+                }else{
+                    mods.set(i, m);
+                }
             }
 
             rs.close();
