@@ -52,6 +52,8 @@ public class CtrlApp {
     private ImageView imv_game;
     @FXML
     private ComboBox<Game> cmb_game;
+    @FXML
+    private ComboBox<ModCollection> cmb_collection;
 
     private PostgesqlJDBC jdbc;
 
@@ -92,6 +94,10 @@ public class CtrlApp {
                 imv_game.setImage(gameSelected.getLogo());
             });
             imv_game.setImage(cmb_game.getSelectionModel().getSelectedItem().getLogo());
+
+            //collections
+
+
         }
 
         lv_mods.getItems().setAll(mods);
@@ -161,5 +167,10 @@ public class CtrlApp {
         } catch (SQLException ex) {
             return MSG_DB_CONNECT_FAILURE;
         }
+    }
+
+    @FXML
+    protected void choseCollection(){
+
     }
 }

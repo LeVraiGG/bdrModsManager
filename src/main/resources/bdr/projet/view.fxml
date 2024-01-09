@@ -97,7 +97,7 @@
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="309.0" prefWidth="600.0">
                   <children>
-                     <GridPane prefHeight="398.0" prefWidth="600.0" AnchorPane.leftAnchor="5.0">
+                     <GridPane prefHeight="398.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -126,26 +126,27 @@
                                  <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.599999999999994" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.60000000000002" AnchorPane.topAnchor="4.0" />
                               </children>
                            </AnchorPane>
-                           <HBox prefHeight="100.0" prefWidth="300.0">
-                              <children>
-                                 <Label text="Collection">
-                                    <HBox.margin>
-                                       <Insets left="5.0" right="10.0" top="6.0" />
-                                    </HBox.margin>
-                                 </Label>
-                                 <ComboBox prefWidth="150.0">
-                                    <HBox.margin>
-                                       <Insets top="2.0" />
-                                    </HBox.margin>
-                                 </ComboBox>
-                              </children>
-                           </HBox>
-                           <Button fx:id="btn_collect_add" mnemonicParsing="false" prefHeight="26.0" prefWidth="60.0" text="Add" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                           <Label text="Collection" GridPane.valignment="TOP">
+                              <GridPane.margin>
+                                 <Insets left="5.0" top="7.0" />
+                              </GridPane.margin>
+                           </Label>
+                           <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="65.0" text="Add new" GridPane.halignment="CENTER">
+                              <GridPane.margin>
+                                 <Insets top="7.0" />
+                              </GridPane.margin>
+                           </Button>
+                           <ComboBox fx:id="cmb_collection" prefWidth="150.0" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+                              <GridPane.margin>
+                                 <Insets top="2.0" />
+                              </GridPane.margin>
+                           </ComboBox>
+                           <Button fx:id="btn_collect_add" mnemonicParsing="false" prefHeight="26.0" prefWidth="65.0" text="Add" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                               <GridPane.margin>
                                  <Insets bottom="7.0" />
                               </GridPane.margin>
                            </Button>
-                           <Button fx:id="btn_collect_remove" mnemonicParsing="false" prefHeight="26.0" prefWidth="60.0" text="Remove" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                           <Button fx:id="btn_collect_remove" mnemonicParsing="false" prefHeight="26.0" prefWidth="65.0" text="Remove" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                               <GridPane.margin>
                                  <Insets bottom="7.0" />
                               </GridPane.margin>

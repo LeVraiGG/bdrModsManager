@@ -14,6 +14,10 @@ public class Mod {
     private String desciption;
     private String downloadLink;
     private int nbDownload;
+    private Modder creator;
+    private ArrayList<Mod> dependencies;
+    private String version;
+    private ArrayList<String> impacts;
 
 
     public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload) { //TODO manage versions, impact, ...

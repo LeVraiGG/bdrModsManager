@@ -2,6 +2,8 @@ package bdr.projet.beans;
 
 import javafx.scene.image.Image;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
@@ -9,6 +11,9 @@ import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
 public class Game {
     private String name;
     private String logo;
+    private String version;
+    private Path modsFolder;
+    private ArrayList<String> genres;
 
     public Game(String name) {
         this.name = name;
@@ -25,6 +30,14 @@ public class Game {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setFolder(Path folder){
+        modsFolder = folder;
+    }
+
+    public Path getFolder(){
+        return modsFolder;
     }
 
     public Image getLogo() {
