@@ -1,5 +1,6 @@
 package bdr.projet.beans;
 
+import bdr.projet.helpers.Transformator;
 import javafx.scene.image.Image;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.WritableImage;
@@ -7,6 +8,7 @@ import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -23,7 +25,7 @@ public class Game {
 
     // Constructeur de copie pour la copie profonde
     public Game(Game other) {
-        this(other.getName(), other.getLogo().getUrl());
+        this(other.getName(), other.getLogoUrl());
     }
 
     public String getName() {
@@ -34,16 +36,17 @@ public class Game {
         this.name = name;
     }
 
-    public Image getLogo() {
-        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm(); //TODO export logic to a general function
+    public String getLogoUrl() {
+        return logo;
+    }
+
+    public Image getLogo(){
+        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm();
         Image defaultImage = new Image(imgPath);
         try {
             URL url = new URL(logo);
-            BufferedImage i = ImageIO.read(url);
-            WritableImage im = new WritableImage(200, 132);
-            im = SwingFXUtils.toFXImage(i,im);
-            return im;
-        } catch (IOException|NullPointerException e) {
+            return Transformator.internetUrlToImage(url, defaultImage);
+        } catch (MalformedURLException e) {
             return defaultImage;
         }
     }
