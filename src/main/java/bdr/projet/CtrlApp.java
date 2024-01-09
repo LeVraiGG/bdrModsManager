@@ -14,6 +14,8 @@ import static bdr.projet.helpers.Constantes.*;
 import bdr.projet.beans.*;
 import bdr.projet.helpers.PostgesqlJDBC;
 import bdr.projet.worker.DbWrk;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 public class CtrlApp {
 
@@ -43,7 +45,7 @@ public class CtrlApp {
     @FXML
     private ListView<String> lv_mod;
     @FXML
-    private TextArea txa_mod;
+    private TextFlow tf_mod;
     @FXML
     private ImageView imv_mod;
     @FXML
@@ -102,7 +104,7 @@ public class CtrlApp {
                                 ? modSelected.getLogo()
                                 : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
             });
-            txa_mod.setText(modSelected.getDesciption() + "\n\nDownload at: " +modSelected.getDownloadLink()); //TODO <a>
+            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink())); //TODO <a>
             imv_mod.setImage(modSelected.getLogo());
         });
 
@@ -139,7 +141,7 @@ public class CtrlApp {
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
         //lv_mod.setId("lv-mod");
-        //txa_mod.setId("txa-mod");
+        //tf_mod.setId("tf-mod");
         //imv_mod.setId("imv-mod");
         //imv_game.setId("imv-game");
         l_games.setId("l-mods");

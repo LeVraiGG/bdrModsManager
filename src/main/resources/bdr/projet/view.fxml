@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane fx:id="ap_main" minHeight="450.0" minWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bdr.projet.CtrlApp">
     <MenuBar fx:id="menu" prefHeight="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -50,7 +51,7 @@
                               </GridPane.margin></Label>
                            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                               <children>
-                                 <ImageView fx:id="imv_game" fitHeight="142.0" fitWidth="200.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
+                                 <ImageView fx:id="imv_game" fitHeight="132.0" fitWidth="200.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
                               </children>
                            </AnchorPane>
                            <HBox prefHeight="100.0" prefWidth="200.0">
@@ -69,13 +70,23 @@
                                     </children>
                                  </HBox>
                               </children></HBox>
-                           <ListView fx:id="lv_mod" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                           <ListView fx:id="lv_mod" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                              <GridPane.margin>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </GridPane.margin></ListView>
                            <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                               <children>
-                                 <ImageView fx:id="imv_mod" fitHeight="150.0" fitWidth="200.0" layoutY="-9.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 <ImageView fx:id="imv_mod" fitHeight="115.0" fitWidth="200.0" layoutY="-9.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0" />
                               </children>
                            </AnchorPane>
-                           <TextArea fx:id="txa_mod" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           <ScrollPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <GridPane.margin>
+                                 <Insets bottom="5.0" left="5.0" right="10.0" top="20.0" />
+                              </GridPane.margin>
+                              <content>
+                                 <TextFlow fx:id="tf_mod" prefHeight="200.0" prefWidth="200.0" />
+                              </content>
+                           </ScrollPane>
                                 </children>
                             </GridPane>
                         </children>
