@@ -18,6 +18,6 @@ public class Constantes {
 
     //DB REQUEST
     public final static String DB_RQ_GET_MODS = "SELECT * FROM mod;";
-    public final static String DB_RQ_GET_GAMES = "SELECT name FROM game;";
+    public final static String DB_RQ_GET_GAMES = "SELECT name, logo FROM game;";
 
 }

@@ -50,7 +50,7 @@ public class DbWrk {
             ResultSet rs = jdbc.R(request);
 
             while (rs.next()) {
-                Game g = new Game(rs.getString(1));
+                Game g = new Game(rs.getString(1), rs.getString(2));
                 int i = games.indexOf(g);
                 if(i == -1){
                     games.add(g);

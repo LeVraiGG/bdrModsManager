@@ -29,7 +29,7 @@ public class Mod {
 
     // Constructeur de copie pour la copie profonde
     public Mod(Mod other){
-        this(other.getName(), other.getGame(), other.getLogo() == null ? null : other.getLogo().getUrl(), other.getDesciption(), other.downloadLink, other.getNbDownload());
+        this(other.getName(), other.getGame(), other.getLogo().getUrl(), other.getDesciption(), other.downloadLink, other.getNbDownload());
     }
 
     public String getName() {

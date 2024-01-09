@@ -94,6 +94,9 @@ public class CtrlApp {
             imv_game.setImage(cmb_game.getSelectionModel().getSelectedItem().getLogo());
         }
 
+        double h = imv_game.getFitHeight();
+        double w = imv_game.getFitWidth();
+
         lv_mods.getItems().setAll(mods);
         lv_mods.setOnMouseClicked(mouseEvent -> {
             Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
