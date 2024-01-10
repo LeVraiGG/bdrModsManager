@@ -8,9 +8,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
-
-import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
+import java.nio.charset.StandardCharsets;
+import com.google.common.hash.Hashing;
 
 public class Transformator {
     public static Image internetUrlToImage(URL url, Image defaultImage) {
@@ -22,5 +21,9 @@ public class Transformator {
         } catch (IOException | NullPointerException e) {
             return defaultImage;
         }
+    }
+
+    public static String encryptSHA256(String s) {
+        return Hashing.sha256().hashString(s, StandardCharsets.UTF_8).toString();
     }
 }

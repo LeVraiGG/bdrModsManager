@@ -1,10 +1,12 @@
 package bdr.projet;
 
+import bdr.projet.helpers.Transformator;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -13,12 +15,10 @@ import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
 
-import bdr.projet.beans.*;
+import bdr.projet.helpers.Popups;
 import bdr.projet.helpers.PostgesqlJDBC;
+import bdr.projet.beans.*;
 import bdr.projet.worker.DbWrk;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-import javafx.stage.Stage;
 
 public class CtrlApp {
 
@@ -26,7 +26,15 @@ public class CtrlApp {
     @FXML
     private AnchorPane ap_main;
     @FXML
-    private MenuBar menu;
+    private MenuBar mb;
+    @FXML
+    private Menu m_user;
+    @FXML
+    private MenuItem mi_change;
+    @FXML
+    private MenuItem mi_disconnect;
+    @FXML
+    private MenuItem mi_delete;
     @FXML
     private TabPane tp;
     @FXML
@@ -56,6 +64,8 @@ public class CtrlApp {
     @FXML
     private ComboBox<Game> cmb_game;
     private PostgesqlJDBC jdbc;
+    private DbWrk db;
+    private User connectedUser;
 
     public void initialize() {
         setCSS();
@@ -63,30 +73,51 @@ public class CtrlApp {
 
     @FXML
     protected void quit() {
-        if (jdbc == null) return;
-
-        try {
-            jdbc.disconnect();
-        } catch (SQLException ignored) {
-        }
+        disconnect();
     }
 
     @FXML
     protected void connect() {
-        String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
-        tf_logs.getChildren().add(new Text(now + " " + connectDb())); //try to connect to db and give a feedback
+        log(connectDb()); //try to connect to db and give a feedback
 
 
-        if (jdbc == null || !jdbc.isConnect()) {
-            tp.getSelectionModel().select(t_logs);
-            return;
-        }
+        if (jdbc == null || !jdbc.isConnect()) return;
 
         //if db connected we can connect users (and get others information from db)
-        DbWrk db = new DbWrk(jdbc);
-        // TODO connect user popups and all of that
+        db = new DbWrk(jdbc);
+        // User connection
+        boolean haveAccount = Popups.ask("Connection", "Step 1", MSG_USER_CONNECTION_STEP1);
+        if (!haveAccount) {
+            if (!Popups.ask("Connection", "Step 1", MSG_USER_CONNECTION_STEP1B)) return;
+        }
+        String username = Popups.askText("Connection", "Step 2", MSG_USER_CONNECTION_STEP2);
+        String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
+
+        ArrayList<User> users = db.getUsers();
+        User user = new User(username, Transformator.encryptSHA256(password));
+
+        if (haveAccount) {
+            boolean validUser = false;
+            for (User u : users) {
+                if (u.equals(user)) {
+                    validUser = true;
+                    break;
+                }
+            }
+
+            if (!validUser) {
+                log(MSG_USER_CONNECT_FAILURE);
+                return;
+            }
+        } else {
+            db.createUser(user);
+            log(MSG_USER_CREATED);
+        }
 
         //User is connected, we can set the UI
+        connectedUser = user;
+        m_user.setText("Connected as : " + connectedUser);
+
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
 
@@ -107,7 +138,7 @@ public class CtrlApp {
                         ? modSelected.getLogo()
                         : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
             });
-            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink())); //TODO <a>
+            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink()));
             imv_mod.setImage(modSelected.getLogo());
         });
 
@@ -116,7 +147,46 @@ public class CtrlApp {
         t_collections.setDisable(false);
         //t_manage_db.setDisable(false);
 
+        mi_change.setDisable(false);
+        mi_disconnect.setDisable(false);
+        mi_delete.setDisable(false);
+
         tp.getSelectionModel().select(t_home);
+    }
+
+    @FXML
+    protected void disconnect() {
+        t_home.setDisable(true);
+        t_collections.setDisable(true);
+        //t_manage_db.setDisable(true);
+        tp.getSelectionModel().select(t_logs);
+
+        mi_change.setDisable(true);
+        mi_disconnect.setDisable(true);
+        mi_delete.setDisable(true);
+
+        m_user.setText("");
+        connectedUser = null;
+        log(MSG_USER_DISCONNECT);
+        log(disconnectDb());
+    }
+
+    @FXML
+    protected void updatePassword() {
+        String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
+        connectedUser.setPassword(Transformator.encryptSHA256(password));
+        db.updateUser(connectedUser);
+    }
+
+    @FXML
+    protected void deleteAccount() {
+        db.deleteUser(connectedUser);
+        disconnect();
+    }
+
+    private void log(String message) {
+        String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
+        tf_logs.getChildren().addFirst(new Text(now + " " + message + "\n"));
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
@@ -139,7 +209,11 @@ public class CtrlApp {
 
         //set id
         ap_main.setId("ap.main");
-        menu.setId("menu");
+        mb.setId("mb");
+        m_user.setId("m-user");
+        mi_change.setId("mi-change");
+        mi_disconnect.setId("mi-disconnect");
+        mi_delete.setId("mi-delete");
         tp.setId("tp");
         t_home.setId("t-home");
         t_collections.setId("t-collections");
@@ -167,6 +241,17 @@ public class CtrlApp {
             return MSG_DB_CONNECT_SUCCESS;
         } catch (SQLException ex) {
             return MSG_DB_CONNECT_FAILURE;
+        }
+    }
+
+    String disconnectDb() {
+        try {
+            jdbc.disconnect();
+            return MSG_DB_DISCONNECT;
+        } catch (SQLException ignored) {
+            return MSG_DB_DISCONNECT;
+        } finally {
+            jdbc = null;
         }
     }
 }

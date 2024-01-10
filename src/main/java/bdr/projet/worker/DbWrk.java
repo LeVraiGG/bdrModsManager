@@ -2,6 +2,7 @@ package bdr.projet.worker;
 
 import bdr.projet.beans.Game;
 import bdr.projet.beans.Mod;
+import bdr.projet.beans.User;
 import bdr.projet.helpers.PostgesqlJDBC;
 
 import java.sql.PreparedStatement;
@@ -16,8 +17,9 @@ public class DbWrk {
 
     ArrayList<Game> games;
     ArrayList<Mod> mods;
+    ArrayList<User> users;
 
-    boolean needToFetchMods = true, needToFetchGames = true;
+    boolean needToFetch = true;
 
     public DbWrk(PostgesqlJDBC jdbc) throws RuntimeException {
         if (jdbc == null || !jdbc.isConnect()) throw new RuntimeException(MSG_EX_JDBC_INVALID);
@@ -25,6 +27,7 @@ public class DbWrk {
 
         games = new ArrayList<>();
         mods = new ArrayList<>();
+        users = new ArrayList<>();
 
         fetchAll();
     }
@@ -38,13 +41,14 @@ public class DbWrk {
     }
 
     private void fetchAll() {
+        if (!needToFetch) return;
         fetchGames();
         fetchMods();
+        fetchUsers();
+        needToFetch = false;
     }
 
     private void fetchGames() {
-        if (!needToFetchGames) return;
-
         try {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_GAMES);
             ResultSet rs = jdbc.R(request);
@@ -61,21 +65,18 @@ public class DbWrk {
 
             rs.close();
             request.close();
-            needToFetchGames = false;
         } catch (SQLException ignored) {
         }
     }
 
     private void fetchMods() {
-        //Test function. TODO mod class and changes this function next
-        if (!needToFetchMods) return;
         fetchGames();
 
         try {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MODS);
             ResultSet rs = jdbc.R(request);
 
-            while (rs.next()) { //TODO DEBUG
+            while (rs.next()) {
                 Mod m = new Mod(
                         rs.getString(1), getGame(rs.getString(2)),
                         rs.getString(3), rs.getString(4),
@@ -91,13 +92,29 @@ public class DbWrk {
 
             rs.close();
             request.close();
-            needToFetchMods = false;
         } catch (SQLException ignored) {
         }
     }
 
-    public ArrayList<Mod> getMods() {
-        return getMods(null);
+    private void fetchUsers() {
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_USERS);
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                User u = new User(rs.getString(1), rs.getString(2));
+                int i = users.indexOf(u);
+                if (i == -1) {
+                    users.add(u);
+                } else {
+                    users.set(i, u);
+                }
+            }
+
+            rs.close();
+            request.close();
+        } catch (SQLException ignored) {
+        }
     }
 
     public ArrayList<Mod> getMods(Game game) {
@@ -127,6 +144,60 @@ public class DbWrk {
         }
 
         return res;
+    }
+
+    public ArrayList<User> getUsers() {
+        fetchUsers();
+
+        ArrayList<User> res = new ArrayList<>();
+        if (users.isEmpty()) return res;
+
+        for (User user : users) {
+            User newUser = new User(user); //deep copy because only dbWrk should be able to modify users ArrayList
+            res.add(newUser);
+        }
+
+        return res;
+    }
+
+    public void createUser(User user) {
+        if (user == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_CREATE_USER);
+            request.setString(1, user.getUsername());
+            request.setString(2, user.getPassword());
+            request.setBoolean(3, user.isAdmin());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
+    }
+
+    public void updateUser(User user) {
+        if (user == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_UPDATE_USER);
+            request.setString(1, user.getPassword());
+            request.setBoolean(2, user.isAdmin());
+            request.setString(3, user.getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
+    }
+
+    public void deleteUser(User user) {
+        if (user == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_USER);
+            request.setString(1, user.getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
     }
 
     //TODO

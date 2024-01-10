@@ -4,6 +4,7 @@ module bdr.projet {
     requires java.sql;
     requires java.desktop;
     requires javafx.swing;
+    requires com.google.common;
 
 
     exports bdr.projet;

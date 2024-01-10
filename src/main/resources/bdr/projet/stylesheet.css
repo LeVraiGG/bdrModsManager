@@ -12,7 +12,28 @@
 #ap-main {
 }
 
-#menu {
+#mb {
+
+}
+
+#m-user:hover {
+    -fx-opacity: 0;
+}
+
+#m-user .label {
+    -fx-font-style: bold;
+    -fx-text-fill: green;
+}
+
+#mi-change {
+
+}
+
+#mi-disconnect {
+
+}
+
+#mi-delete {
 
 }
 
@@ -73,7 +94,7 @@
 
 }
 
-    .l {
+.l {
     -fx-background-color: #414141;
     -fx-text-fill: #FFFFFF;
     -fx-font-style: bold;
