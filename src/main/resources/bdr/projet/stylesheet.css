@@ -6,10 +6,11 @@
 
 #custom-css-id {
     -fx-font: bold italic 20pt "Arial";
-    -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
+    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
 }
 
-#ap-main {}
+#ap-main {
+}
 
 #menu {
 
@@ -44,19 +45,35 @@
 
 }
 
-#lv-mods{
+#lv-mods {
 
 }
 
-#l-games{
+#lv-mod {
 
 }
 
-#cmb-games{
+#tf-mod {
 
 }
 
-.l {
+#imv-mod {
+
+}
+
+#l-games {
+
+}
+
+#cmb-games {
+
+}
+
+#imv-game {
+
+}
+
+    .l {
     -fx-background-color: #414141;
     -fx-text-fill: #FFFFFF;
     -fx-font-style: bold;

@@ -55,6 +55,10 @@ public class CtrlApp {
 
     private PostgesqlJDBC jdbc;
 
+    public CtrlApp() {
+        setCSS();
+    }
+
     @FXML
     protected void quit() {
         if (jdbc == null) return;
@@ -67,13 +71,11 @@ public class CtrlApp {
 
     @FXML
     protected void connect() {
-        initView();
         //connect user popups and all of that
+        initView();
     }
 
     void initView() {
-        setCSS(); //set the css
-
         l_welcome.setText(connectDb()); //try to connect to db and give a feedback
 
         //if db connected set mods, games list
@@ -104,8 +106,8 @@ public class CtrlApp {
             lv_mod.setOnMouseClicked(mouseEvent1 -> {
                 String screenshotSelected = lv_mod.getSelectionModel().getSelectedItem();
                 imv_mod.setImage(screenshotSelected.equals("Screenshots:")
-                                ? modSelected.getLogo()
-                                : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
+                        ? modSelected.getLogo()
+                        : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
             });
             tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink())); //TODO <a>
             imv_mod.setImage(modSelected.getLogo());
@@ -143,10 +145,10 @@ public class CtrlApp {
         l_welcome.setId("l-welcome");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
-        //lv_mod.setId("lv-mod");
-        //tf_mod.setId("tf-mod");
-        //imv_mod.setId("imv-mod");
-        //imv_game.setId("imv-game");
+        lv_mod.setId("lv-mod");
+        tf_mod.setId("tf-mod");
+        imv_mod.setId("imv-mod");
+        imv_game.setId("imv-game");
         l_games.setId("l-mods");
         cmb_game.setId("cmb-games");
 

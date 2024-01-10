@@ -43,7 +43,7 @@ public class DbWrk {
     }
 
     private void fetchGames() {
-        if(!needToFetchGames) return;
+        if (!needToFetchGames) return;
 
         try {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_GAMES);
@@ -52,9 +52,9 @@ public class DbWrk {
             while (rs.next()) {
                 Game g = new Game(rs.getString(1), rs.getString(2));
                 int i = games.indexOf(g);
-                if(i == -1){
+                if (i == -1) {
                     games.add(g);
-                }else{
+                } else {
                     games.set(i, g);
                 }
             }
@@ -68,7 +68,7 @@ public class DbWrk {
 
     private void fetchMods() {
         //Test function. TODO mod class and changes this function next
-        if(!needToFetchMods) return;
+        if (!needToFetchMods) return;
         fetchGames();
 
         try {
@@ -80,11 +80,11 @@ public class DbWrk {
                         rs.getString(1), getGame(rs.getString(2)),
                         rs.getString(3), rs.getString(4),
                         rs.getString(5), rs.getInt(6));
-                        
+
                 int i = mods.indexOf(m);
-                if(i == -1){
+                if (i == -1) {
                     mods.add(m);
-                }else{
+                } else {
                     mods.set(i, m);
                 }
             }

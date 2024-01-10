@@ -31,7 +31,7 @@ public class Mod {
     }
 
     // Constructeur de copie pour la copie profonde
-    public Mod(Mod other){
+    public Mod(Mod other) {
         this(other.getName(), other.getGame(), other.getLogoUrl(), other.getDesciption(), other.getDownloadLink(), other.getNbDownload());
         images.addAll(other.getScreenshots());
     }
@@ -52,7 +52,7 @@ public class Mod {
         this.game = game;
     }
 
-    public String getLogoUrl(){
+    public String getLogoUrl() {
         return images.get(0);
     }
 

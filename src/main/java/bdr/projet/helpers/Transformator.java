@@ -13,7 +13,7 @@ import java.util.Objects;
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
 
 public class Transformator {
-    public static Image internetUrlToImage(URL url, Image defaultImage){
+    public static Image internetUrlToImage(URL url, Image defaultImage) {
         try {
             BufferedImage i = ImageIO.read(url);
             WritableImage im = new WritableImage(200, 132);

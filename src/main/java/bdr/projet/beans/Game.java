@@ -40,7 +40,7 @@ public class Game {
         return logo;
     }
 
-    public Image getLogo(){
+    public Image getLogo() {
         String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm();
         Image defaultImage = new Image(imgPath);
         try {
