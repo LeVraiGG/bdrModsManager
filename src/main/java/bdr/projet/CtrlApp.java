@@ -7,6 +7,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
@@ -16,6 +18,7 @@ import bdr.projet.helpers.PostgesqlJDBC;
 import bdr.projet.worker.DbWrk;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 
 public class CtrlApp {
 
@@ -33,9 +36,7 @@ public class CtrlApp {
     @FXML
     private Tab t_manage_db;
     @FXML
-    private Tab t_demo_view;
-    @FXML
-    private Label l_welcome;
+    private Tab t_logs;
     @FXML
     private Label l_mods;
     @FXML
@@ -45,6 +46,8 @@ public class CtrlApp {
     @FXML
     private ListView<String> lv_mod;
     @FXML
+    private TextFlow tf_logs;
+    @FXML
     private TextFlow tf_mod;
     @FXML
     private ImageView imv_mod;
@@ -52,10 +55,9 @@ public class CtrlApp {
     private ImageView imv_game;
     @FXML
     private ComboBox<Game> cmb_game;
-
     private PostgesqlJDBC jdbc;
 
-    public CtrlApp() {
+    public void initialize() {
         setCSS();
     }
 
@@ -71,35 +73,31 @@ public class CtrlApp {
 
     @FXML
     protected void connect() {
-        //connect user popups and all of that
-        initView();
-    }
+        String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
+        tf_logs.getChildren().add(new Text(now + " " + connectDb())); //try to connect to db and give a feedback
 
-    void initView() {
-        l_welcome.setText(connectDb()); //try to connect to db and give a feedback
 
-        //if db connected set mods, games list
-        ArrayList<Mod> mods = new ArrayList<>();
-        if (jdbc != null && jdbc.isConnect()) {
-            DbWrk db = new DbWrk(jdbc);
-            cmb_game.getItems().setAll(db.getGames());
-            cmb_game.setValue(cmb_game.getItems().get(0));
-
-            mods = cmb_game.getItems().isEmpty()
-                    ? db.getMods()
-                    : db.getMods(cmb_game.getSelectionModel().getSelectedItem());
-            cmb_game.setOnAction(actionEvent -> {
-                Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
-                lv_mods.getItems().setAll(db.getMods(gameSelected));
-                imv_game.setImage(gameSelected.getLogo());
-            });
-            imv_game.setImage(cmb_game.getSelectionModel().getSelectedItem().getLogo());
+        if (jdbc == null || !jdbc.isConnect()) {
+            tp.getSelectionModel().select(t_logs);
+            return;
         }
 
-        double h = imv_game.getFitHeight();
-        double w = imv_game.getFitWidth();
+        //if db connected we can connect users (and get others information from db)
+        DbWrk db = new DbWrk(jdbc);
+        // TODO connect user popups and all of that
 
-        lv_mods.getItems().setAll(mods);
+        //User is connected, we can set the UI
+        /*Games*/
+        cmb_game.getItems().setAll(db.getGames());
+
+        cmb_game.setOnAction(actionEvent -> {
+            Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
+            lv_mods.getItems().setAll(db.getMods(gameSelected));
+            imv_game.setImage(gameSelected.getLogo());
+        });
+        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
+
+        /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
             Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
             lv_mod.getItems().setAll(screenshotsToString(modSelected.getScreenshots()));
@@ -113,7 +111,12 @@ public class CtrlApp {
             imv_mod.setImage(modSelected.getLogo());
         });
 
-        tp.getSelectionModel().select(t_demo_view); //set selected tab to demo view for let the user know the connection to db feedback
+        //Update tabs
+        t_home.setDisable(false);
+        t_collections.setDisable(false);
+        //t_manage_db.setDisable(false);
+
+        tp.getSelectionModel().select(t_home);
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
@@ -141,8 +144,8 @@ public class CtrlApp {
         t_home.setId("t-home");
         t_collections.setId("t-collections");
         t_manage_db.setId("t-manage-db");
-        t_demo_view.setId("t-demo-view");
-        l_welcome.setId("l-welcome");
+        t_logs.setId("t-logs");
+        tf_logs.setId("tf-logs");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
         lv_mod.setId("lv-mod");
@@ -153,7 +156,6 @@ public class CtrlApp {
         cmb_game.setId("cmb-games");
 
         //set classes
-        l_welcome.getStyleClass().add("l");
         l_mods.getStyleClass().add("l");
         l_games.getStyleClass().add("l");
     }
