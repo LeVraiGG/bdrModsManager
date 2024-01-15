@@ -121,6 +121,28 @@ public class DbWrk {
         }
     }
 
+    public ArrayList<String> getModCollectionLogs(ModCollection mc) {
+        ArrayList<String> res = new ArrayList<>();
+
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MOD_COLLECTION_LOGS1 +mc.getUser().getUsername() + DB_RQ_GET_MOD_COLLECTION_LOGS2);
+            request.setString(1, mc.getName());
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                res.add("["+rs.getTimestamp(1).toString() +"]\n\tpath=" + rs.getString(4) + "\n\tlogo="
+                + rs.getString(5) + "\n\tdescription=" + rs.getString(6)
+                        + "\n\tgame="+rs.getString(7) + "\n\tmods=" + rs.getString(8));
+            }
+
+            rs.close();
+            request.close();
+            return res;
+        } catch (SQLException e) {
+            return res;
+        }
+    }
+
     private ArrayList<Mod> getModCollectionMods(ModCollection mc) {
         fetchMods();
         ArrayList<Mod> res = new ArrayList<>();

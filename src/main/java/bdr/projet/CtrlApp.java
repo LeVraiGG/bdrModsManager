@@ -1,6 +1,7 @@
 package bdr.projet;
 
 import bdr.projet.helpers.Transformator;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -38,6 +39,8 @@ public class CtrlApp {
     @FXML
     private TabPane tp;
     @FXML
+    private TabPane tp_logs;
+    @FXML
     private Tab t_home;
     @FXML
     private Tab t_collections;
@@ -45,6 +48,10 @@ public class CtrlApp {
     private Tab t_manage_db;
     @FXML
     private Tab t_logs;
+    @FXML
+    private Tab t_logs_general;
+    @FXML
+    private Tab t_logs_user;
     @FXML
     private Label l_mods;
     @FXML
@@ -58,7 +65,9 @@ public class CtrlApp {
     @FXML
     private ListView<Mod> lv_mods_available;
     @FXML
-    private TextFlow tf_logs;
+    private TextFlow tf_logs_general;
+    @FXML
+    private TextFlow tf_logs_user;
     @FXML
     private TextFlow tf_mod;
     @FXML
@@ -80,6 +89,7 @@ public class CtrlApp {
     @FXML
     protected void quit() {
         disconnect();
+        Platform.exit();
     }
 
     @FXML
@@ -168,6 +178,11 @@ public class CtrlApp {
         t_home.setDisable(false);
         t_collections.setDisable(false);
         //t_manage_db.setDisable(false);
+        if(connectedUser.isAdmin()) {
+            t_logs_general.setDisable(false);
+            tf_logs_general.setVisible(true);
+        }
+        t_logs_user.setDisable(false);
 
         mi_change.setDisable(false);
         mi_disconnect.setDisable(false);
@@ -181,7 +196,10 @@ public class CtrlApp {
         t_home.setDisable(true);
         t_collections.setDisable(true);
         //t_manage_db.setDisable(true);
+        t_logs_general.setDisable(true);
+        tf_logs_general.setVisible(false);
         tp.getSelectionModel().select(t_logs);
+        tf_logs_user.setDisable(true);
 
         mi_change.setDisable(true);
         mi_disconnect.setDisable(true);
@@ -252,9 +270,21 @@ public class CtrlApp {
         }
     }
 
+    @FXML
+    protected void showLogs() {
+        ModCollection mc = Popups.askElInAList("Select Mod Collection", "Select a Mod Collection to show its logs", "Mod collections:",
+                new ArrayList<>(cmb_mod_collections.getItems()));
+        ArrayList<String> logs = db.getModCollectionLogs(mc);
+        for(String log : logs.reversed())
+            tf_logs_user.getChildren().addFirst(new Text(log + "\n"));
+        tp_logs.getSelectionModel().select(t_logs_user);
+        tp.getSelectionModel().select(t_logs);
+
+    }
+
     private void log(String message) {
         String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
-        tf_logs.getChildren().addFirst(new Text(now + " " + message + "\n"));
+        tf_logs_general.getChildren().addFirst(new Text(now + " " + message + "\n"));
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
@@ -287,7 +317,7 @@ public class CtrlApp {
         t_collections.setId("t-collections");
         t_manage_db.setId("t-manage-db");
         t_logs.setId("t-logs");
-        tf_logs.setId("tf-logs");
+        tf_logs_general.setId("tf-logs");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
         lv_mod.setId("lv-mod");

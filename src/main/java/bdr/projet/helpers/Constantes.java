@@ -37,6 +37,8 @@ public class Constantes {
     public final static String DB_RQ_GET_MODS = "SELECT * FROM mod;";
     public final static String DB_RQ_GET_GAMES = "SELECT name, logo FROM game;";
     public final static String DB_RQ_GET_USERS = "SELECT name, password FROM _user;";
+    public final static String DB_RQ_GET_MOD_COLLECTION_LOGS1 = "SELECT * FROM ";
+    public final static String DB_RQ_GET_MOD_COLLECTION_LOGS2 = "_view  WHERE fk_mod_collection_name=?;";
     public final static String DB_RQ_CREATE_USER = "INSERT INTO _user VALUES (?, ?, ?);";
     public final static String DB_RQ_UPDATE_USER = "UPDATE _user SET password=?, isadmin=? WHERE name=?;";
     public final static String DB_RQ_DELETE_USER = "DELETE FROM _user WHERE name=?;";
@@ -46,5 +48,6 @@ public class Constantes {
     public final static String DB_RQ_DELETE_MOD_COLLECTION = "DELETE FROM mod_collection WHERE name=? AND fk_user=?;";
     public final static String DB_RQ_CREATE_MOD_COLLECTION_MOD = "INSERT INTO mod_mod_collection VALUES (?, ?, ?, ?);";
     public final static String DB_RQ_DELETE_MOD_COLLECTION_MOD = "DELETE FROM mod_mod_collection WHERE fk_mod_name=? AND fk_mod_game_name=? AND fk_mod_collection_name=? AND fk_mod_collection_user_name=?;";
+
 
 }
