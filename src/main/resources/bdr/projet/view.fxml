@@ -6,67 +6,56 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="ap_main" minHeight="450.0" minWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="bdr.projet.CtrlApp">
-    <MenuBar fx:id="mb" prefHeight="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-             AnchorPane.topAnchor="0.0">
+<AnchorPane fx:id="ap_main" minHeight="450.0" minWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bdr.projet.CtrlApp">
+    <MenuBar fx:id="mb" prefHeight="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
             <Menu mnemonicParsing="false" text="Menu">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit"/>
+                    <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
                 </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Account">
                 <items>
-                    <MenuItem mnemonicParsing="false" onAction="#connect" text="Connect"/>
-                    <MenuItem fx:id="mi_change" disable="true" mnemonicParsing="false" onAction="#updatePassword" text="Change Password"/>
-                    <MenuItem fx:id="mi_disconnect" disable="true" mnemonicParsing="false" onAction="#disconnect" text="Disconnect"/>
-                    <MenuItem fx:id="mi_delete" disable="true" mnemonicParsing="false" onAction="#deleteAccount" text="Delete"/>
+                    <MenuItem mnemonicParsing="false" onAction="#connect" text="Connect" />
+                    <MenuItem fx:id="mi_change" disable="true" mnemonicParsing="false" onAction="#updatePassword" text="Change Password" />
+                    <MenuItem fx:id="mi_disconnect" disable="true" mnemonicParsing="false" onAction="#disconnect" text="Disconnect" />
+                    <MenuItem fx:id="mi_delete" disable="true" mnemonicParsing="false" onAction="#deleteAccount" text="Delete" />
                 </items>
             </Menu>
-            <Menu fx:id="m_user" mnemonicParsing="false" text=""/>
+            <Menu fx:id="m_user" mnemonicParsing="false" text="" />
         </menus>
     </MenuBar>
 
-    <TabPane fx:id="tp" layoutY="-6.0" prefHeight="327.0" prefWidth="346.0" tabClosingPolicy="UNAVAILABLE"
-             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-             AnchorPane.topAnchor="25.0">
+    <TabPane fx:id="tp" layoutY="-6.0" prefHeight="327.0" prefWidth="346.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
         <tabs>
             <Tab fx:id="t_home" disable="true" text="Home">
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                            <GridPane layoutX="94.0" layoutY="66.0" AnchorPane.bottomAnchor="0.0"
-                                      AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0"
-                                      AnchorPane.topAnchor="0.0">
+                            <GridPane layoutX="94.0" layoutY="66.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                                    <ListView fx:id="lv_mods" prefHeight="200.0" prefWidth="200.0"
-                                              GridPane.rowIndex="1">
+                                    <ListView fx:id="lv_mods" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                         <GridPane.margin>
-                                            <Insets left="5.0" right="5.0" top="20.0"/>
+                                            <Insets left="5.0" right="5.0" top="20.0" />
                                         </GridPane.margin>
                                     </ListView>
                                     <Label fx:id="l_mods" text="Mods" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                         <GridPane.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </GridPane.margin>
                                     </Label>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                                         <children>
-                                            <ImageView fx:id="imv_game" fitHeight="132.0" fitWidth="200.0"
-                                                       layoutX="50.0" layoutY="4.0" pickOnBounds="true"
-                                                       preserveRatio="true" AnchorPane.bottomAnchor="14.0"
-                                                       AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0"
-                                                       AnchorPane.topAnchor="40.0"/>
+                                            <ImageView fx:id="imv_game" fitHeight="132.0" fitWidth="200.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
                                         </children>
                                     </AnchorPane>
                                     <HBox prefHeight="100.0" prefWidth="200.0">
@@ -75,12 +64,12 @@
                                                 <children>
                                                     <Label fx:id="l_games" text="Game">
                                                         <HBox.margin>
-                                                            <Insets left="5.0" right="10.0" top="6.0"/>
+                                                            <Insets left="5.0" right="10.0" top="6.0" />
                                                         </HBox.margin>
                                                     </Label>
                                                     <ComboBox fx:id="cmb_game" prefWidth="150.0">
                                                         <HBox.margin>
-                                                            <Insets top="2.0"/>
+                                                            <Insets top="2.0" />
                                                         </HBox.margin>
                                                     </ComboBox>
                                                 </children>
@@ -89,24 +78,20 @@
                                     </HBox>
                                     <ListView fx:id="lv_mod" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                         <GridPane.margin>
-                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                         </GridPane.margin>
                                     </ListView>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
-                                                GridPane.rowIndex="2">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                         <children>
-                                            <ImageView fx:id="imv_mod" fitHeight="115.0" fitWidth="200.0" layoutY="-9.0"
-                                                       pickOnBounds="true" preserveRatio="true"
-                                                       AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0"
-                                                       AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0"/>
+                                            <ImageView fx:id="imv_mod" fitHeight="115.0" fitWidth="200.0" layoutY="-9.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0" />
                                         </children>
                                     </AnchorPane>
                                     <ScrollPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                                         <GridPane.margin>
-                                            <Insets bottom="5.0" left="5.0" right="10.0" top="20.0"/>
+                                            <Insets bottom="5.0" left="5.0" right="10.0" top="20.0" />
                                         </GridPane.margin>
                                         <content>
-                                            <TextFlow fx:id="tf_mod" prefHeight="200.0" prefWidth="200.0"/>
+                                            <TextFlow fx:id="tf_mod" prefHeight="200.0" prefWidth="200.0" />
                                         </content>
                                     </ScrollPane>
                                 </children>
@@ -121,76 +106,75 @@
                         <children>
                             <GridPane prefHeight="398.0" prefWidth="600.0" AnchorPane.leftAnchor="5.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                    <RowConstraints maxHeight="192.4" minHeight="10.0" prefHeight="70.0"
-                                                    vgrow="SOMETIMES"/>
-                                    <RowConstraints maxHeight="242.39999618530274" minHeight="10.0" prefHeight="140.0"
-                                                    vgrow="SOMETIMES"/>
-                                    <RowConstraints maxHeight="245.4000305175781" minHeight="10.0" prefHeight="140.0"
-                                                    vgrow="SOMETIMES"/>
+                                    <RowConstraints maxHeight="192.4" minHeight="10.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="242.39999618530274" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="245.4000305175781" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                                    <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                                    <ListView fx:id="lv_mod_collection_mods" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                                         <GridPane.margin>
-                                            <Insets bottom="40.0" left="5.0" right="5.0" top="20.0"/>
+                                            <Insets bottom="40.0" left="5.0" right="5.0" top="20.0" />
                                         </GridPane.margin>
                                     </ListView>
-                                    <Label text="Mods in the collection" GridPane.rowIndex="1"
-                                           GridPane.valignment="TOP">
+                                    <Label text="Mods in the collection" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                         <GridPane.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </GridPane.margin>
                                     </Label>
                                     <Label text="Mods for the game" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                         <GridPane.margin>
-                                            <Insets left="5.0"/>
+                                            <Insets left="5.0" />
                                         </GridPane.margin>
                                     </Label>
                                     <AnchorPane GridPane.columnIndex="1">
                                         <children>
-                                            <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0"
-                                                       pickOnBounds="true" preserveRatio="true"
-                                                       AnchorPane.bottomAnchor="4.599999999999994"
-                                                       AnchorPane.leftAnchor="50.0"
-                                                       AnchorPane.rightAnchor="50.60000000000002"
-                                                       AnchorPane.topAnchor="4.0"/>
+                                            <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.599999999999994" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.60000000000002" AnchorPane.topAnchor="4.0" />
+                                 <AnchorPane layoutX="1.0" layoutY="24.0" prefHeight="112.0" prefWidth="295.0">
+                                    <children>
+                                       <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <children>
+                                             <Button mnemonicParsing="false" onAction="#createCollection" text="Create a Collection" />
+                                             <Button mnemonicParsing="false" onAction="#deleteCollection" text="Delete Selected Collection" />
+                                          </children>
+                                          <padding>
+                                             <Insets left="5.0" top="10.0" />
+                                          </padding>
+                                       </HBox>
+                                    </children>
+                                 </AnchorPane>
                                         </children>
                                     </AnchorPane>
                                     <HBox prefHeight="100.0" prefWidth="300.0">
                                         <children>
                                             <Label text="Collection">
                                                 <HBox.margin>
-                                                    <Insets left="5.0" right="10.0" top="6.0"/>
+                                                    <Insets left="5.0" right="10.0" top="6.0" />
                                                 </HBox.margin>
                                             </Label>
-                                            <ComboBox prefWidth="150.0">
+                                            <ComboBox fx:id="cmb_mod_collections" prefWidth="150.0">
                                                 <HBox.margin>
-                                                    <Insets top="2.0"/>
+                                                    <Insets top="2.0" />
                                                 </HBox.margin>
                                             </ComboBox>
                                         </children>
                                     </HBox>
-                                    <Button fx:id="btn_collect_add" mnemonicParsing="false" prefHeight="26.0"
-                                            prefWidth="60.0" text="Add" textAlignment="CENTER"
-                                            GridPane.halignment="CENTER" GridPane.rowIndex="2"
-                                            GridPane.valignment="BOTTOM">
+                                    <Button mnemonicParsing="false" onAction="#addSelectedMod" prefHeight="26.0" prefWidth="91.0" text="Add Selected" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                                         <GridPane.margin>
-                                            <Insets bottom="7.0"/>
+                                            <Insets bottom="7.0" />
                                         </GridPane.margin>
                                     </Button>
-                                    <Button fx:id="btn_collect_remove" mnemonicParsing="false" prefHeight="26.0"
-                                            prefWidth="60.0" text="Remove" GridPane.halignment="CENTER"
-                                            GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+                                    <Button mnemonicParsing="false" onAction="#removeSelectedMod" prefHeight="26.0" prefWidth="111.0" text="Remove Selected" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                                         <GridPane.margin>
-                                            <Insets bottom="7.0"/>
+                                            <Insets bottom="7.0" />
                                         </GridPane.margin>
                                     </Button>
-                                    <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                                    <ListView fx:id="lv_mods_available" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                         <GridPane.margin>
-                                            <Insets bottom="40.0" left="5.0" right="5.0" top="20.0"/>
+                                            <Insets bottom="40.0" left="5.0" right="5.0" top="20.0" />
                                         </GridPane.margin>
                                     </ListView>
                                 </children>
@@ -209,11 +193,9 @@
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                            <ScrollPane layoutX="158.0" layoutY="81.0" AnchorPane.bottomAnchor="15.0"
-                                        AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0"
-                                        AnchorPane.topAnchor="15.0">
+                            <ScrollPane layoutX="158.0" layoutY="81.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
                                 <content>
-                                    <TextFlow fx:id="tf_logs" prefHeight="365.0" prefWidth="555.0"/>
+                                    <TextFlow fx:id="tf_logs" prefHeight="365.0" prefWidth="555.0" />
                                 </content>
                             </ScrollPane>
                         </children>

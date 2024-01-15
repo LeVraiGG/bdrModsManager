@@ -2,6 +2,7 @@ package bdr.projet.worker;
 
 import bdr.projet.beans.Game;
 import bdr.projet.beans.Mod;
+import bdr.projet.beans.ModCollection;
 import bdr.projet.beans.User;
 import bdr.projet.helpers.PostgesqlJDBC;
 
@@ -18,6 +19,7 @@ public class DbWrk {
     ArrayList<Game> games;
     ArrayList<Mod> mods;
     ArrayList<User> users;
+    ArrayList<ModCollection> currentModCollections;
 
     boolean needToFetch = true;
 
@@ -58,6 +60,7 @@ public class DbWrk {
                 int i = games.indexOf(g);
                 if (i == -1) {
                     games.add(g);
+                    i = games.size() - 1;
                 } else {
                     games.set(i, g);
                 }
@@ -66,6 +69,7 @@ public class DbWrk {
             rs.close();
             request.close();
         } catch (SQLException ignored) {
+            System.out.println("");
         }
     }
 
@@ -117,6 +121,60 @@ public class DbWrk {
         }
     }
 
+    private ArrayList<Mod> getModCollectionMods(ModCollection mc) {
+        fetchMods();
+        ArrayList<Mod> res = new ArrayList<>();
+
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MOD_COLLECTIONS_MODS);
+            request.setString(1, mc.getName());
+            request.setString(2, mc.getUser().getUsername());
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                Mod m = getMod(rs.getString(1), getGame(rs.getString(2)));
+                if(m != null) res.add(m);
+            }
+
+            rs.close();
+            request.close();
+            return res;
+        } catch (SQLException e) {
+            return res;
+        }
+    }
+
+    public ArrayList<ModCollection> getModCollection(User user) {
+        try {
+            currentModCollections = new ArrayList<>();
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MOD_COLLECTIONS);
+            request.setString(1, user.getUsername());
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                ModCollection mc = new ModCollection(rs.getString(1), user, rs.getString(3),
+                        rs.getString(4), rs.getString(5), getGame(rs.getString(6)));
+                int i = currentModCollections.indexOf(mc);
+                if (i == -1) {
+                    currentModCollections.add(mc);
+                    i = currentModCollections.size() - 1;
+                } else {
+                    currentModCollections.set(i, mc);
+                }
+
+                for(Mod m : getModCollectionMods(mc)) {
+                    mc.addMod(m);
+                }
+            }
+
+            rs.close();
+            request.close();
+            return currentModCollections;
+        } catch (SQLException ignored) {
+            return currentModCollections;
+        }
+    }
+
     public ArrayList<Mod> getMods(Game game) {
         fetchMods();
 
@@ -130,6 +188,15 @@ public class DbWrk {
         }
 
         return res;
+    }
+
+    private Mod getMod(String name, Game game) {
+        if(name == null || name.isBlank() || game == null) return null;
+        for(Mod m : getMods(game)) {
+            if(m.getName().equals(name))
+                return m;
+        }
+        return null;
     }
 
     public ArrayList<Game> getGames() {

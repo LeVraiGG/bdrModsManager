@@ -31,5 +31,7 @@ public class Constantes {
     public final static String DB_RQ_CREATE_USER = "INSERT INTO _user VALUES (?, ?, ?);";
     public final static String DB_RQ_UPDATE_USER = "UPDATE _user SET password=?, isadmin=? WHERE name=?;";
     public final static String DB_RQ_DELETE_USER = "DELETE FROM _user WHERE name=?;";
+    public final static String DB_RQ_GET_MOD_COLLECTIONS = "SELECT * FROM mod_collection WHERE fk_user=?;";
+    public final static String DB_RQ_GET_MOD_COLLECTIONS_MODS = "SELECT fk_mod_name, fk_mod_game_name FROM mod_mod_collection WHERE fk_mod_collection_name=? AND fk_mod_collection_user_name=?;";
 
 }

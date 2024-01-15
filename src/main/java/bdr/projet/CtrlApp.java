@@ -53,6 +53,8 @@ public class CtrlApp {
     private ListView<Mod> lv_mods;
     @FXML
     private ListView<String> lv_mod;
+    private ListView<Mod> lv_mod_collection_mods;
+    private ListView<Mod> lv_mods_available;
     @FXML
     private TextFlow tf_logs;
     @FXML
@@ -63,6 +65,7 @@ public class CtrlApp {
     private ImageView imv_game;
     @FXML
     private ComboBox<Game> cmb_game;
+    private ComboBox<ModCollection> cmb_mod_collections;
     private PostgesqlJDBC jdbc;
     private DbWrk db;
     private User connectedUser;
@@ -121,12 +124,12 @@ public class CtrlApp {
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
 
+        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
         cmb_game.setOnAction(actionEvent -> {
             Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
             lv_mods.getItems().setAll(db.getMods(gameSelected));
             imv_game.setImage(gameSelected.getLogo());
         });
-        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
 
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
@@ -141,6 +144,22 @@ public class CtrlApp {
             tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink()));
             imv_mod.setImage(modSelected.getLogo());
         });
+
+        /*Mod Collections*/
+        cmb_mod_collections.getItems().setAll(db.getModCollection(connectedUser));
+        if (!cmb_mod_collections.getItems().isEmpty())
+            cmb_mod_collections.setValue(cmb_mod_collections.getItems().get(0));
+
+        cmb_mod_collections.setOnAction(actionEvent -> {
+            ModCollection modCollectionSelected = cmb_mod_collections.getSelectionModel().getSelectedItem();
+            lv_mod_collection_mods.getItems().setAll(modCollectionSelected.getMods());
+            ArrayList<Mod> modAvailable = new ArrayList<>();
+            for (Mod m : db.getMods(modCollectionSelected.getGame())) {
+                if(!modCollectionSelected.getMods().contains(m)) modAvailable.add(m);
+            }
+            lv_mods_available.getItems().setAll(modAvailable);
+        });
+
 
         //Update tabs
         t_home.setDisable(false);
