@@ -1,7 +1,10 @@
 package bdr.projet.beans;
 
+import bdr.projet.helpers.Transformator;
 import javafx.scene.image.Image;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -32,8 +35,9 @@ public class Mod {
     }
 
     // Constructeur de copie pour la copie profonde
-    public Mod(Mod other){
-        this(other.getName(), other.getGame(), other.getLogo() == null ? null : other.getLogo().getUrl(), other.getDesciption(), other.downloadLink, other.getNbDownload());
+    public Mod(Mod other) {
+        this(other.getName(), other.getGame(), other.getLogoUrl(), other.getDesciption(), other.getDownloadLink(), other.getNbDownload());
+        images.addAll(other.getScreenshots());
     }
 
     public String getName() {
@@ -52,9 +56,19 @@ public class Mod {
         this.game = game;
     }
 
+    public String getLogoUrl() {
+        return images.get(0);
+    }
+
     public Image getLogo() {
-        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm(); //TODO download image then -> images.get(0) == null ? URL_IMG_NOT_FOUND : images.get(0));
-        return new Image(imgPath);
+        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm();
+        Image defaultImage = new Image(imgPath);
+        try {
+            URL url = new URL(images.get(0));
+            return Transformator.internetUrlToImage(url, defaultImage);
+        } catch (MalformedURLException e) {
+            return defaultImage;
+        }
     }
 
     public void setLogo(String logo) {
@@ -66,8 +80,16 @@ public class Mod {
     }
 
     public Image getScreenshot(int id) {
-        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm();//TODO downloads images then -> id >= images.size() || images.get(id) == null ? URL_IMG_NOT_FOUND : images.get(id);
-        return new Image(imgPath);
+        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm();
+        Image defaultImage = new Image(imgPath);
+        if (id >= images.size()) return defaultImage;
+
+        try {
+            URL url = new URL(images.get(id));
+            return Transformator.internetUrlToImage(url, defaultImage);
+        } catch (MalformedURLException e) {
+            return defaultImage;
+        }
     }
 
     public void addScreenshot(String image) {

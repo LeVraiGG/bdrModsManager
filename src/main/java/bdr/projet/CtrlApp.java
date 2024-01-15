@@ -1,21 +1,24 @@
 package bdr.projet;
 
+import bdr.projet.helpers.Transformator;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
 
-import bdr.projet.beans.*;
+import bdr.projet.helpers.Popups;
 import bdr.projet.helpers.PostgesqlJDBC;
+import bdr.projet.beans.*;
 import bdr.projet.worker.DbWrk;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 public class CtrlApp {
 
@@ -23,7 +26,15 @@ public class CtrlApp {
     @FXML
     private AnchorPane ap_main;
     @FXML
-    private MenuBar menu;
+    private MenuBar mb;
+    @FXML
+    private Menu m_user;
+    @FXML
+    private MenuItem mi_change;
+    @FXML
+    private MenuItem mi_disconnect;
+    @FXML
+    private MenuItem mi_delete;
     @FXML
     private TabPane tp;
     @FXML
@@ -33,9 +44,7 @@ public class CtrlApp {
     @FXML
     private Tab t_manage_db;
     @FXML
-    private Tab t_demo_view;
-    @FXML
-    private Label l_welcome;
+    private Tab t_logs;
     @FXML
     private Label l_mods;
     @FXML
@@ -45,6 +54,8 @@ public class CtrlApp {
     @FXML
     private ListView<String> lv_mod;
     @FXML
+    private TextFlow tf_logs;
+    @FXML
     private TextFlow tf_mod;
     @FXML
     private ImageView imv_mod;
@@ -52,69 +63,130 @@ public class CtrlApp {
     private ImageView imv_game;
     @FXML
     private ComboBox<Game> cmb_game;
-    @FXML
-    private ComboBox<ModCollection> cmb_collection;
-
     private PostgesqlJDBC jdbc;
+    private DbWrk db;
+    private User connectedUser;
+
+    public void initialize() {
+        setCSS();
+    }
 
     @FXML
     protected void quit() {
-        if (jdbc == null) return;
-
-        try {
-            jdbc.disconnect();
-        } catch (SQLException ignored) {
-        }
+        disconnect();
     }
 
     @FXML
     protected void connect() {
-        initView();
-        //connect user popups and all of that
-    }
-
-    void initView() {
-        setCSS(); //set the css
-
-        l_welcome.setText(connectDb()); //try to connect to db and give a feedback
-
-        //if db connected set mods, games list
-        ArrayList<Mod> mods = new ArrayList<>();
-        if (jdbc != null && jdbc.isConnect()) {
-            DbWrk db = new DbWrk(jdbc);
-            cmb_game.getItems().setAll(db.getGames());
-            cmb_game.setValue(cmb_game.getItems().get(0));
-
-            mods = cmb_game.getItems().isEmpty()
-                    ? db.getMods()
-                    : db.getMods(cmb_game.getSelectionModel().getSelectedItem());
-            cmb_game.setOnAction(actionEvent -> {
-                Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
-                lv_mods.getItems().setAll(db.getMods(gameSelected));
-                imv_game.setImage(gameSelected.getLogo());
-            });
-            imv_game.setImage(cmb_game.getSelectionModel().getSelectedItem().getLogo());
-
-            //collections
+        log(connectDb()); //try to connect to db and give a feedback
 
 
+        if (jdbc == null || !jdbc.isConnect()) return;
+
+        //if db connected we can connect users (and get others information from db)
+        db = new DbWrk(jdbc);
+        // User connection
+        boolean haveAccount = Popups.ask("Connection", "Step 1", MSG_USER_CONNECTION_STEP1);
+        if (!haveAccount) {
+            if (!Popups.ask("Connection", "Step 1", MSG_USER_CONNECTION_STEP1B)) return;
+        }
+        String username = Popups.askText("Connection", "Step 2", MSG_USER_CONNECTION_STEP2);
+        String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
+
+        ArrayList<User> users = db.getUsers();
+        User user = new User(username, Transformator.encryptSHA256(password));
+
+        if (haveAccount) {
+            boolean validUser = false;
+            for (User u : users) {
+                if (u.equals(user)) {
+                    validUser = true;
+                    break;
+                }
+            }
+
+            if (!validUser) {
+                log(MSG_USER_CONNECT_FAILURE);
+                return;
+            }
+        } else {
+            db.createUser(user);
+            log(MSG_USER_CREATED);
         }
 
-        lv_mods.getItems().setAll(mods);
+        //User is connected, we can set the UI
+        connectedUser = user;
+        m_user.setText("Connected as : " + connectedUser);
+
+        /*Games*/
+        cmb_game.getItems().setAll(db.getGames());
+
+        cmb_game.setOnAction(actionEvent -> {
+            Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
+            lv_mods.getItems().setAll(db.getMods(gameSelected));
+            imv_game.setImage(gameSelected.getLogo());
+        });
+        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
+
+        /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
             Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
             lv_mod.getItems().setAll(screenshotsToString(modSelected.getScreenshots()));
             lv_mod.setOnMouseClicked(mouseEvent1 -> {
                 String screenshotSelected = lv_mod.getSelectionModel().getSelectedItem();
                 imv_mod.setImage(screenshotSelected.equals("Screenshots:")
-                                ? modSelected.getLogo()
-                                : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
+                        ? modSelected.getLogo()
+                        : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
             });
-            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink())); //TODO <a>
+            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink()));
             imv_mod.setImage(modSelected.getLogo());
         });
 
-        tp.getSelectionModel().select(t_demo_view); //set selected tab to demo view for let the user know the connection to db feedback
+        //Update tabs
+        t_home.setDisable(false);
+        t_collections.setDisable(false);
+        //t_manage_db.setDisable(false);
+
+        mi_change.setDisable(false);
+        mi_disconnect.setDisable(false);
+        mi_delete.setDisable(false);
+
+        tp.getSelectionModel().select(t_home);
+    }
+
+    @FXML
+    protected void disconnect() {
+        t_home.setDisable(true);
+        t_collections.setDisable(true);
+        //t_manage_db.setDisable(true);
+        tp.getSelectionModel().select(t_logs);
+
+        mi_change.setDisable(true);
+        mi_disconnect.setDisable(true);
+        mi_delete.setDisable(true);
+
+        m_user.setText("");
+        connectedUser = null;
+        log(MSG_USER_DISCONNECT);
+        log(disconnectDb());
+    }
+
+    @FXML
+    protected void updatePassword() {
+        String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
+        connectedUser.setPassword(Transformator.encryptSHA256(password));
+        db.updateUser(connectedUser);
+    }
+
+    @FXML
+    protected void deleteAccount() {
+        db.deleteUser(connectedUser);
+        disconnect();
+    }
+
+    private void log(String message) {
+        String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
+        tf_logs.getChildren().addFirst(new Text(now + " " + message + "\n"));
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
@@ -137,24 +209,27 @@ public class CtrlApp {
 
         //set id
         ap_main.setId("ap.main");
-        menu.setId("menu");
+        mb.setId("mb");
+        m_user.setId("m-user");
+        mi_change.setId("mi-change");
+        mi_disconnect.setId("mi-disconnect");
+        mi_delete.setId("mi-delete");
         tp.setId("tp");
         t_home.setId("t-home");
         t_collections.setId("t-collections");
         t_manage_db.setId("t-manage-db");
-        t_demo_view.setId("t-demo-view");
-        l_welcome.setId("l-welcome");
+        t_logs.setId("t-logs");
+        tf_logs.setId("tf-logs");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
-        //lv_mod.setId("lv-mod");
-        //tf_mod.setId("tf-mod");
-        //imv_mod.setId("imv-mod");
-        //imv_game.setId("imv-game");
+        lv_mod.setId("lv-mod");
+        tf_mod.setId("tf-mod");
+        imv_mod.setId("imv-mod");
+        imv_game.setId("imv-game");
         l_games.setId("l-mods");
         cmb_game.setId("cmb-games");
 
         //set classes
-        l_welcome.getStyleClass().add("l");
         l_mods.getStyleClass().add("l");
         l_games.getStyleClass().add("l");
     }
@@ -169,8 +244,14 @@ public class CtrlApp {
         }
     }
 
-    @FXML
-    protected void choseCollection(){
-
+    String disconnectDb() {
+        try {
+            jdbc.disconnect();
+            return MSG_DB_DISCONNECT;
+        } catch (SQLException ignored) {
+            return MSG_DB_DISCONNECT;
+        } finally {
+            jdbc = null;
+        }
     }
 }

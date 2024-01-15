@@ -1,9 +1,15 @@
 package bdr.projet.beans;
 
+import bdr.projet.helpers.Transformator;
 import javafx.scene.image.Image;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
@@ -11,17 +17,15 @@ import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
 public class Game {
     private String name;
     private String logo;
-    private String version;
-    private Path modsFolder;
-    private ArrayList<String> genres;
 
-    public Game(String name) {
+    public Game(String name, String logo) {
         this.name = name;
+        this.logo = logo;
     }
 
     // Constructeur de copie pour la copie profonde
     public Game(Game other) {
-        this(other.getName());
+        this(other.getName(), other.getLogoUrl());
     }
 
     public String getName() {
@@ -32,17 +36,19 @@ public class Game {
         this.name = name;
     }
 
-    public void setFolder(Path folder){
-        modsFolder = folder;
-    }
-
-    public Path getFolder(){
-        return modsFolder;
+    public String getLogoUrl() {
+        return logo;
     }
 
     public Image getLogo() {
-        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm(); //TODO download image then -> logo == null ? URL_IMG_NOT_FOUND : logo);
-        return new Image(imgPath);
+        String imgPath = Objects.requireNonNull(getClass().getResource(URL_IMG_NOT_FOUND)).toExternalForm();
+        Image defaultImage = new Image(imgPath);
+        try {
+            URL url = new URL(logo);
+            return Transformator.internetUrlToImage(url, defaultImage);
+        } catch (MalformedURLException e) {
+            return defaultImage;
+        }
     }
 
     public void setLogo(String logo) {

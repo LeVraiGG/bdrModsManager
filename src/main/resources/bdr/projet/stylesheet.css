@@ -6,12 +6,34 @@
 
 #custom-css-id {
     -fx-font: bold italic 20pt "Arial";
-    -fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
+    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
 }
 
-#ap-main {}
+#ap-main {
+}
 
-#menu {
+#mb {
+
+}
+
+#m-user:hover {
+    -fx-opacity: 0;
+}
+
+#m-user .label {
+    -fx-font-style: bold;
+    -fx-text-fill: green;
+}
+
+#mi-change {
+
+}
+
+#mi-disconnect {
+
+}
+
+#mi-delete {
 
 }
 
@@ -32,11 +54,11 @@
 
 }
 
-#t-demo-view {
+#t-logs {
 
 }
 
-#l-welcome {
+#tf-logs {
 
 }
 
@@ -44,15 +66,31 @@
 
 }
 
-#lv-mods{
+#lv-mods {
 
 }
 
-#l-games{
+#lv-mod {
 
 }
 
-#cmb-games{
+#tf-mod {
+
+}
+
+#imv-mod {
+
+}
+
+#l-games {
+
+}
+
+#cmb-games {
+
+}
+
+#imv-game {
 
 }
 
