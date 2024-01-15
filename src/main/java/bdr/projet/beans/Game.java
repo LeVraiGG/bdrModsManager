@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
@@ -65,5 +66,9 @@ public class Game {
     @Override
     public String toString() {
         return name;
+    }
+
+    public Path getFolder() {
+        return null;
     }
 }
