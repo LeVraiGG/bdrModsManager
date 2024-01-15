@@ -52,9 +52,10 @@ public class ModCollection {
     }
 
     public void setRelative_path_to_folder(String relative_path_to_folder) {
-        if(relative_path_to_folder == null || relative_path_to_folder.isBlank()) return;
+        if (relative_path_to_folder == null || relative_path_to_folder.isBlank()) return;
         this.relative_path_to_folder = relative_path_to_folder;
     }
+
     public String getLogoUrl() {
         return logo;
     }
@@ -95,8 +96,8 @@ public class ModCollection {
     }
 
     public void addMod(Mod mod) {
-        if(mod == null || !mod.getGame().equals(game) || mods.contains(mod)) return;
-        if(mods.isEmpty()) game = mod.getGame();
+        if (mod == null || (game != null && !mod.getGame().equals(game)) || mods.contains(mod)) return;
+        if (mods.isEmpty()) game = mod.getGame();
         mods.add(mod);
     }
 

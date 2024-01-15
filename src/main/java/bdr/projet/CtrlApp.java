@@ -150,8 +150,6 @@ public class CtrlApp {
 
         /*Mod Collections*/
         cmb_mod_collections.getItems().setAll(db.getModCollection(connectedUser));
-        if (!cmb_mod_collections.getItems().isEmpty())
-            cmb_mod_collections.setValue(cmb_mod_collections.getItems().get(0));
 
         cmb_mod_collections.setOnAction(actionEvent -> {
             ModCollection modCollectionSelected = cmb_mod_collections.getSelectionModel().getSelectedItem();
@@ -162,6 +160,8 @@ public class CtrlApp {
             }
             lv_mods_available.getItems().setAll(modAvailable);
         });
+        if (!cmb_mod_collections.getItems().isEmpty())
+            cmb_mod_collections.setValue(cmb_mod_collections.getItems().get(0));
 
 
         //Update tabs
@@ -213,30 +213,43 @@ public class CtrlApp {
         String logo = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER3, MSG_CREATE_COLLECTION3);
         String description = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER4, MSG_CREATE_COLLECTION4);
         ModCollection mc = new ModCollection(name, connectedUser, path, logo.isBlank() ? null : logo, description, null);
-        cmb_mod_collections.getItems().add(mc);
+        db.createModCollection(mc);
+        if (db.getModCollection(connectedUser).contains(mc)) {
+            cmb_mod_collections.getItems().add(mc);
+            cmb_mod_collections.getSelectionModel().select(mc);
+        }
     }
 
     @FXML
     protected void deleteCollection() {
         ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
-        cmb_mod_collections.getItems().remove(mc);
-        //TODO DELETE mc
+        db.deleteModCollection(mc);
+        if (!db.getModCollection(connectedUser).contains(mc))
+            cmb_mod_collections.getItems().remove(mc);
     }
 
     @FXML
     protected void addSelectedMod() {
-        cmb_mod_collections.getSelectionModel().getSelectedItem()
-                .addMod(lv_mods_available.getSelectionModel().getSelectedItem()); //TODO +add on DB
-        lv_mod_collection_mods.getItems().setAll(cmb_mod_collections.getSelectionModel().getSelectedItem().getMods());
-        lv_mods_available.getItems().remove(lv_mods_available.getSelectionModel().getSelectedItem());
+        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
+        Mod m = lv_mods_available.getSelectionModel().getSelectedItem();
+        mc.addMod(m);
+        if(mc.getMods().contains(m)) { //should be always true but w/e
+            db.addModCollectionMod(m, mc);
+            lv_mod_collection_mods.getItems().add(m);
+            lv_mods_available.getItems().remove(m);
+        }
     }
 
     @FXML
     protected void removeSelectedMod() {
-        cmb_mod_collections.getSelectionModel().getSelectedItem()
-                .removeMod(lv_mod_collection_mods.getSelectionModel().getSelectedItem()); //TODO +remove on DB
-        lv_mods_available.getItems().add(lv_mods_available.getSelectionModel().getSelectedItem());
-        lv_mod_collection_mods.getItems().setAll(cmb_mod_collections.getSelectionModel().getSelectedItem().getMods());
+        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
+        Mod m = lv_mod_collection_mods.getSelectionModel().getSelectedItem();
+        mc.removeMod(m);
+        if(!mc.getMods().contains(m)) { //should be always true but w/e
+            db.removeModCollectionMod(m, mc);
+            lv_mod_collection_mods.getItems().remove(m);
+            lv_mods_available.getItems().add(m);
+        }
     }
 
     private void log(String message) {

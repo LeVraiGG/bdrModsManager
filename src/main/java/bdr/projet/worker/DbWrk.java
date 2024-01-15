@@ -178,8 +178,8 @@ public class DbWrk {
     public ArrayList<Mod> getMods(Game game) {
         fetchMods();
 
+        if(game == null) return new ArrayList<>(mods);
         ArrayList<Mod> res = new ArrayList<>();
-        if (mods.isEmpty()) return res;
 
         for (Mod mod : mods) {
             if (!mod.getGame().equals(game)) continue;
@@ -260,6 +260,66 @@ public class DbWrk {
         try {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_USER);
             request.setString(1, user.getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
+    }
+
+    public void createModCollection(ModCollection mc) {
+        if (mc == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_CREATE_MOD_COLLECTION);
+            request.setString(1, mc.getName());
+            request.setString(2, mc.getUser().getUsername());
+            request.setString(3, mc.getRelative_path_to_folder());
+            request.setString(4, mc.getLogoUrl());
+            request.setString(5, mc.getDescription().isBlank() ? null : mc.getDescription());
+            request.setString(6, mc.getGame() == null ? null : mc.getGame().getName());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
+    }
+
+    public void deleteModCollection(ModCollection mc) {
+        if (mc == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_MOD_COLLECTION);
+            request.setString(1, mc.getName());
+            request.setString(2, mc.getUser().getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
+    }
+
+    public void addModCollectionMod(Mod m, ModCollection mc) {
+        if (mc == null || m == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_CREATE_MOD_COLLECTION_MOD);
+            request.setString(1, m.getName());
+            request.setString(2, m.getGame().getName());
+            request.setString(3, mc.getName());
+            request.setString(4, mc.getUser().getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException ignored) {
+        }
+    }
+
+    public void removeModCollectionMod(Mod m, ModCollection mc) {
+        if (mc == null || m == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_MOD_COLLECTION_MOD);
+            request.setString(1, m.getName());
+            request.setString(2, m.getGame().getName());
+            request.setString(3, mc.getName());
+            request.setString(4, mc.getUser().getUsername());
             int rs = jdbc.CUD(request);
             request.close();
             needToFetch = true;
