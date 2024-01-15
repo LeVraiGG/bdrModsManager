@@ -16,6 +16,15 @@ public class Constantes {
     public final static String MSG_USER_CONNECTION_STEP1B = "Create a new account?";
     public final static String MSG_USER_CONNECTION_STEP2 = "Username";
     public final static String MSG_USER_CONNECTION_STEP3 = "Password";
+    public final static String MSG_CREATE_COLLECTION_TITLE = "Create a Collection";
+    public final static String MSG_CREATE_COLLECTION_HEADER1 = "Choose a Name";
+    public final static String MSG_CREATE_COLLECTION_HEADER2 = "Choose a path";
+    public final static String MSG_CREATE_COLLECTION_HEADER3 = "Choose a logo (if no logo let empty else internet link of the logo)";
+    public final static String MSG_CREATE_COLLECTION_HEADER4 = "Choose a description (if no description let empty)";
+    public final static String MSG_CREATE_COLLECTION1 = "Name:";
+    public final static String MSG_CREATE_COLLECTION2 = "Path:";
+    public final static String MSG_CREATE_COLLECTION3 = "Logo:";
+    public final static String MSG_CREATE_COLLECTION4 = "Description:";
     public final static String MSG_DB_CONNECT_SUCCESS = "Successfully connected to the db :)";
     public final static String MSG_DB_CONNECT_FAILURE = "Failed to connect to the db :(";
     public final static String MSG_USER_CONNECT_FAILURE = "User seems to be not valid.";

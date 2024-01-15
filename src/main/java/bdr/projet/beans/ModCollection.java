@@ -96,6 +96,7 @@ public class ModCollection {
 
     public void addMod(Mod mod) {
         if(mod == null || !mod.getGame().equals(game) || mods.contains(mod)) return;
+        if(mods.isEmpty()) game = mod.getGame();
         mods.add(mod);
     }
 

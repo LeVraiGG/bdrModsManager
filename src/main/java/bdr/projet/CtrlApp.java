@@ -53,7 +53,9 @@ public class CtrlApp {
     private ListView<Mod> lv_mods;
     @FXML
     private ListView<String> lv_mod;
+    @FXML
     private ListView<Mod> lv_mod_collection_mods;
+    @FXML
     private ListView<Mod> lv_mods_available;
     @FXML
     private TextFlow tf_logs;
@@ -65,6 +67,7 @@ public class CtrlApp {
     private ImageView imv_game;
     @FXML
     private ComboBox<Game> cmb_game;
+    @FXML
     private ComboBox<ModCollection> cmb_mod_collections;
     private PostgesqlJDBC jdbc;
     private DbWrk db;
@@ -155,7 +158,7 @@ public class CtrlApp {
             lv_mod_collection_mods.getItems().setAll(modCollectionSelected.getMods());
             ArrayList<Mod> modAvailable = new ArrayList<>();
             for (Mod m : db.getMods(modCollectionSelected.getGame())) {
-                if(!modCollectionSelected.getMods().contains(m)) modAvailable.add(m);
+                if (!modCollectionSelected.getMods().contains(m)) modAvailable.add(m);
             }
             lv_mods_available.getItems().setAll(modAvailable);
         });
@@ -201,6 +204,39 @@ public class CtrlApp {
     protected void deleteAccount() {
         db.deleteUser(connectedUser);
         disconnect();
+    }
+
+    @FXML
+    protected void createCollection() {
+        String name = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER1, MSG_CREATE_COLLECTION1);
+        String path = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER2, MSG_CREATE_COLLECTION2);//TODO fileManager
+        String logo = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER3, MSG_CREATE_COLLECTION3);
+        String description = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER4, MSG_CREATE_COLLECTION4);
+        ModCollection mc = new ModCollection(name, connectedUser, path, logo.isBlank() ? null : logo, description, null);
+        cmb_mod_collections.getItems().add(mc);
+    }
+
+    @FXML
+    protected void deleteCollection() {
+        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
+        cmb_mod_collections.getItems().remove(mc);
+        //TODO DELETE mc
+    }
+
+    @FXML
+    protected void addSelectedMod() {
+        cmb_mod_collections.getSelectionModel().getSelectedItem()
+                .addMod(lv_mods_available.getSelectionModel().getSelectedItem()); //TODO +add on DB
+        lv_mod_collection_mods.getItems().setAll(cmb_mod_collections.getSelectionModel().getSelectedItem().getMods());
+        lv_mods_available.getItems().remove(lv_mods_available.getSelectionModel().getSelectedItem());
+    }
+
+    @FXML
+    protected void removeSelectedMod() {
+        cmb_mod_collections.getSelectionModel().getSelectedItem()
+                .removeMod(lv_mod_collection_mods.getSelectionModel().getSelectedItem()); //TODO +remove on DB
+        lv_mods_available.getItems().add(lv_mods_available.getSelectionModel().getSelectedItem());
+        lv_mod_collection_mods.getItems().setAll(cmb_mod_collections.getSelectionModel().getSelectedItem().getMods());
     }
 
     private void log(String message) {
