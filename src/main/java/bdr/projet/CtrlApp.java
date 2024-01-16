@@ -242,8 +242,10 @@ public class CtrlApp {
     protected void deleteCollection() {
         ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
         db.deleteModCollection(mc);
-        if (!db.getModCollection(connectedUser).contains(mc))
+        if (!db.getModCollection(connectedUser).contains(mc)) {
             cmb_mod_collections.getItems().remove(mc);
+            if(!cmb_mod_collections.getItems().isEmpty()) cmb_mod_collections.getSelectionModel().select(0);
+        }
     }
 
     @FXML
@@ -275,6 +277,7 @@ public class CtrlApp {
         ModCollection mc = Popups.askElInAList("Select Mod Collection", "Select a Mod Collection to show its logs", "Mod collections:",
                 new ArrayList<>(cmb_mod_collections.getItems()));
         ArrayList<String> logs = db.getModCollectionLogs(mc);
+        tf_logs_user.getChildren().clear();
         for(String log : logs.reversed())
             tf_logs_user.getChildren().addFirst(new Text(log + "\n"));
         tp_logs.getSelectionModel().select(t_logs_user);

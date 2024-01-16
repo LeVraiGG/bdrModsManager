@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS mod_collection_logger
     version                     timestamp NOT NULL,
     fk_mod_collection_name      varchar(255), -- noFk because collection could be deleted now
     fk_mod_collection_user_name varchar(255), -- noFk because user could be deleted now
-    relative_path_to_folder     text NOT NULL,
+    relative_path_to_folder     text,
     logo                        varchar(255),
     description                 text,
     fk_game                     varchar(255),
