@@ -1,12 +1,25 @@
-.custom-css-class {
-    -fx-font: 16px "Serif";
-    -fx-padding: 10;
-    -fx-background-color: #CCFF99;
+/*General Theme*/
+
+.ap,
+.tab-pane, .tab,
+.menu, .menu-bar, .menu-item,
+.scroll-pane, .scroll-bar,
+.label {
+    -fx-background-color: #414141;
 }
 
-#custom-css-id {
-    -fx-font: bold italic 20pt "Arial";
-    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+.menu-item,
+.label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: normal;
+}
+
+.label:hover {
+    -fx-font-weight: bold;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #AAAAAA;
 }
 
 #ap-main {
@@ -21,7 +34,7 @@
 }
 
 #m-user .label {
-    -fx-font-style: bold;
+    -fx-font-weight: bold;
     -fx-text-fill: green;
 }
 
@@ -50,7 +63,7 @@
 
 }
 
-#t-manage-db {
+#t-manage {
 
 }
 
@@ -92,10 +105,4 @@
 
 #imv-game {
 
-}
-
-.l {
-    -fx-background-color: #414141;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-style: bold;
 }

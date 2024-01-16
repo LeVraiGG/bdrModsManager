@@ -27,6 +27,22 @@ public class CtrlApp {
     @FXML
     private AnchorPane ap_main;
     @FXML
+    private AnchorPane ap_home;
+    @FXML
+    private AnchorPane ap_game_img;
+    @FXML
+    private AnchorPane ap_mod_img;
+    @FXML
+    private AnchorPane ap_collections;
+    @FXML
+    private AnchorPane ap_collection_img;
+    @FXML
+    private AnchorPane ap_collection_vbox;
+    @FXML
+    private AnchorPane ap_manage;
+    @FXML
+    private AnchorPane ap_logs;
+    @FXML
     private MenuBar mb;
     @FXML
     private Menu m_user;
@@ -45,7 +61,7 @@ public class CtrlApp {
     @FXML
     private Tab t_collections;
     @FXML
-    private Tab t_manage_db;
+    private Tab t_manage;
     @FXML
     private Tab t_logs;
     @FXML
@@ -137,12 +153,12 @@ public class CtrlApp {
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
 
-        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
         cmb_game.setOnAction(actionEvent -> {
             Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
             lv_mods.getItems().setAll(db.getMods(gameSelected));
             imv_game.setImage(gameSelected.getLogo());
         });
+        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
 
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
@@ -177,7 +193,7 @@ public class CtrlApp {
         //Update tabs
         t_home.setDisable(false);
         t_collections.setDisable(false);
-        //t_manage_db.setDisable(false);
+        //t_manage.setDisable(false);
         if(connectedUser.isAdmin()) {
             t_logs_general.setDisable(false);
             tf_logs_general.setVisible(true);
@@ -195,7 +211,7 @@ public class CtrlApp {
     protected void disconnect() {
         t_home.setDisable(true);
         t_collections.setDisable(true);
-        //t_manage_db.setDisable(true);
+        //t_manage.setDisable(true);
         t_logs_general.setDisable(true);
         tf_logs_general.setVisible(false);
         tp.getSelectionModel().select(t_logs);
@@ -318,7 +334,7 @@ public class CtrlApp {
         tp.setId("tp");
         t_home.setId("t-home");
         t_collections.setId("t-collections");
-        t_manage_db.setId("t-manage-db");
+        t_manage.setId("t-manage");
         t_logs.setId("t-logs");
         tf_logs_general.setId("tf-logs");
         l_mods.setId("l-mods");
@@ -331,8 +347,15 @@ public class CtrlApp {
         cmb_game.setId("cmb-games");
 
         //set classes
-        l_mods.getStyleClass().add("l");
-        l_games.getStyleClass().add("l");
+        ap_main.getStyleClass().add("ap");
+        ap_home.getStyleClass().add("ap");
+        ap_game_img.getStyleClass().add("ap");
+        ap_mod_img.getStyleClass().add("ap");
+        ap_collections.getStyleClass().add("ap");
+        ap_collection_img.getStyleClass().add("ap");
+        ap_collection_vbox.getStyleClass().add("ap");
+        ap_manage.getStyleClass().add("ap");
+        ap_logs.getStyleClass().add("ap");
     }
 
     String connectDb() {
