@@ -1,6 +1,5 @@
 package bdr.projet.beans;
 
-import bdr.projet.helpers.Utilities;
 import javafx.scene.image.Image;
 
 import java.net.MalformedURLException;
@@ -9,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
+
+import bdr.projet.helpers.Utilities;
 
 public class Mod {
     private final String name;
@@ -140,7 +141,7 @@ public class Mod {
 
     public void addComment(Comment comment) {
         if (comment == null) return;
-        this.comments = comments;
+        this.comments.add(comment);
     }
 
     @Override

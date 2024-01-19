@@ -1,6 +1,5 @@
 package bdr.projet.beans;
 
-import bdr.projet.helpers.Utilities;
 import javafx.scene.image.Image;
 
 import java.net.MalformedURLException;
@@ -9,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
+
+import bdr.projet.helpers.Utilities;
 
 public class ModCollection {
     private final String name;
@@ -20,7 +21,7 @@ public class ModCollection {
     private ArrayList<Mod> mods;
 
 
-    public ModCollection(String name, User user, String relative_path_to_folder, String logo, String description, Game game) { //TODO manage mods
+    public ModCollection(String name, User user, String relative_path_to_folder, String logo, String description, Game game) {
         if (name == null || name.isBlank() || relative_path_to_folder == null || relative_path_to_folder.isBlank() || user == null)
             throw new RuntimeException("ModCollection is invalid: " + name + ":" + relative_path_to_folder + ":" + user);
         this.name = name;

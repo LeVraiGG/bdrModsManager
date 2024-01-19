@@ -1,6 +1,5 @@
 package bdr.projet.beans;
 
-import bdr.projet.helpers.Utilities;
 import javafx.scene.image.Image;
 
 import java.net.MalformedURLException;
@@ -9,6 +8,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
+
+import bdr.projet.helpers.Utilities;
 
 public class Game {
     private final String name;

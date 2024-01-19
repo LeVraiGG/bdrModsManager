@@ -11,7 +11,7 @@ public class User {
     private ArrayList<Comment> comments;
 
     public User(String username, String password, boolean isAdmin) throws RuntimeException {
-        if(username == null || username.isEmpty() || password == null)
+        if (username == null || username.isEmpty() || password == null)
             throw new RuntimeException("User is invalid: " + username + ":" + password);
         this.username = username;
         this.password = password;
@@ -42,7 +42,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        if(password == null) return;
+        if (password == null) return;
         this.password = password;
     }
 
@@ -50,12 +50,12 @@ public class User {
      * Sorry for this troll name :)
      * NB: Set admin to false
      */
-    public void itSTooMuchResponsibilitySorry(){
+    public void itSTooMuchResponsibilitySorry() {
         isAdmin = false;
     }
 
     public void setAdmin(User admin) {
-        if(admin == null || !admin.isAdmin()) return;
+        if (admin == null || !admin.isAdmin()) return;
         isAdmin = true;
 
     }
@@ -65,7 +65,7 @@ public class User {
     }
 
     public void addComment(Comment comment) {
-        if(comment == null) return;
+        if (comment == null) return;
         this.comments.add(comment);
     }
 

@@ -21,7 +21,7 @@ public class PostgesqlJDBC {
         db = DriverManager.getConnection(url, props);
     }
 
-    public boolean isConnect(){
+    public boolean isConnect() {
         return db != null;
     }
 
@@ -30,16 +30,7 @@ public class PostgesqlJDBC {
     }
 
     public ResultSet R(PreparedStatement request) throws SQLException {
-        ResultSet rs = request.executeQuery();
-
-        /*while (rs.next()) {
-            System.out.print("Column 1 returned "); //TODO RESOLVE THAT ISSUE
-            System.out.println(rs.getString(1));
-        }
-
-        rs.close();
-        request.close();*/
-        return  rs;
+        return request.executeQuery();
     }
 
     public int CUD(PreparedStatement request) throws SQLException {

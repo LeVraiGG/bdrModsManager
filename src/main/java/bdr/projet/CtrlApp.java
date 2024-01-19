@@ -1,13 +1,10 @@
 package bdr.projet;
 
-import bdr.projet.helpers.Utilities;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -16,6 +13,7 @@ import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
 
+import bdr.projet.helpers.Utilities;
 import bdr.projet.helpers.Popups;
 import bdr.projet.helpers.PostgesqlJDBC;
 import bdr.projet.beans.*;
@@ -166,7 +164,7 @@ public class CtrlApp {
     }
 
     private void setConnectedUI() {
-        if(connectedUser == null) return; //Just a security check
+        if (connectedUser == null) return; //Just a security check
 
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
@@ -260,11 +258,11 @@ public class CtrlApp {
     }
 
     private void setUI() {
-        mb.setOnMouseMoved(e->{
+        mb.setOnMouseMoved(e -> {
             m_user.hide();
         });
 
-        if(connectedUser == null) setDisconnectedUI();
+        if (connectedUser == null) setDisconnectedUI();
         else setConnectedUI();
     }
 
@@ -477,9 +475,9 @@ public class CtrlApp {
     }
 
     void disconnectDb() {
-        if(jdbc == null) return;
+        if (jdbc == null) return;
         try {
-            if(jdbc.isConnect()) {
+            if (jdbc.isConnect()) {
                 jdbc.disconnect();
                 log(MSG_DB_DISCONNECT);
             }

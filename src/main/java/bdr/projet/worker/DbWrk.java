@@ -1,19 +1,15 @@
 package bdr.projet.worker;
 
-import bdr.projet.CtrlApp;
-import bdr.projet.beans.Comment;
-import bdr.projet.beans.Game;
-import bdr.projet.beans.Mod;
-import bdr.projet.beans.ModCollection;
-import bdr.projet.beans.User;
-import bdr.projet.helpers.PostgesqlJDBC;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
+
+import bdr.projet.CtrlApp;
+import bdr.projet.beans.*;
+import bdr.projet.helpers.PostgesqlJDBC;
 
 public class DbWrk {
     PostgesqlJDBC jdbc;
