@@ -1,6 +1,6 @@
 package bdr.projet;
 
-import bdr.projet.helpers.Transformator;
+import bdr.projet.helpers.Utilities;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,8 +10,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
@@ -110,13 +108,13 @@ public class CtrlApp {
 
     @FXML
     protected void connect() {
-        log(connectDb()); //try to connect to db and give a feedback
+        connectDb();
 
 
         if (jdbc == null || !jdbc.isConnect()) return;
 
         //if db connected we can connect users (and get others information from db)
-        db = new DbWrk(jdbc);
+        db = new DbWrk(jdbc, this);
         // User connection
         boolean haveAccount = Popups.ask("Connection", "Step 1", MSG_USER_CONNECTION_STEP1);
         if (!haveAccount) {
@@ -126,7 +124,7 @@ public class CtrlApp {
         String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
 
         ArrayList<User> users = db.getUsers();
-        User user = new User(username, Transformator.encryptSHA256(password));
+        User user = new User(username, Utilities.encryptSHA256(password));
 
         if (haveAccount) {
             boolean validUser = false;
@@ -139,16 +137,18 @@ public class CtrlApp {
 
             if (!validUser) {
                 log(MSG_USER_CONNECT_FAILURE);
+                Popups.error("Login Error", MSG_USER_CONNECT_FAILURE);
                 return;
             }
         } else {
             db.createUser(user);
-            log(MSG_USER_CREATED);
+            log(MSG_USER_CREATED + " " + user);
         }
 
         //User is connected, we can set the UI
         connectedUser = user;
         m_user.setText("Connected as : " + connectedUser);
+        log("Connected as : " + connectedUser);
 
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
@@ -224,13 +224,12 @@ public class CtrlApp {
         m_user.setText("");
         connectedUser = null;
         log(MSG_USER_DISCONNECT);
-        log(disconnectDb());
     }
 
     @FXML
     protected void updatePassword() {
         String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
-        connectedUser.setPassword(Transformator.encryptSHA256(password));
+        connectedUser.setPassword(Utilities.encryptSHA256(password));
         db.updateUser(connectedUser);
     }
 
@@ -301,9 +300,15 @@ public class CtrlApp {
 
     }
 
-    private void log(String message) {
-        String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
-        tf_logs_general.getChildren().addFirst(new Text(now + " " + message + "\n"));
+    public void log(String message) {
+        tf_logs_general.getChildren().addFirst(new Text(Utilities.getNow() + " " + message + "\n"));
+    }
+
+    public void log(Exception e) {
+        Hyperlink linkException = new Hyperlink("Show details");
+        linkException.setOnMouseClicked(mouseEvent -> Popups.exceptionHandle("Details", e));
+        tf_logs_general.getChildren().addFirst(linkException);
+        tf_logs_general.getChildren().addFirst(new Text(Utilities.getNow() + " " + e.getClass() + "\n\t"));
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
@@ -312,6 +317,7 @@ public class CtrlApp {
         for (int i = 1; i <= screenshots.size(); i++) res.add(String.valueOf(i));
         return res;
     }
+
 
     void setCSS() {
         //add css. ref : https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
@@ -323,7 +329,7 @@ public class CtrlApp {
             with id:
                 l_welcome.setId("custom-css-id");
          */
-
+        //TODO clean up
         //set id
         ap_main.setId("ap.main");
         mb.setId("mb");
@@ -358,22 +364,27 @@ public class CtrlApp {
         ap_logs.getStyleClass().add("ap");
     }
 
-    String connectDb() {
+    /**
+     * try to connect to db and log result
+     */
+    void connectDb() {
         jdbc = new PostgesqlJDBC(URL_PSQL + DB_NAME, DB_USER, DB_PASSWORD);
         try {
             jdbc.connect();
-            return MSG_DB_CONNECT_SUCCESS;
-        } catch (SQLException ex) {
-            return MSG_DB_CONNECT_FAILURE;
+            log(MSG_DB_CONNECT_SUCCESS);
+        } catch (SQLException e) {
+            log(MSG_DB_CONNECT_FAILURE);
+            log(e);
         }
     }
 
-    String disconnectDb() {
+    void disconnectDb() {
         try {
             jdbc.disconnect();
-            return MSG_DB_DISCONNECT;
-        } catch (SQLException ignored) {
-            return MSG_DB_DISCONNECT;
+            log(MSG_DB_DISCONNECT);
+        } catch (SQLException e) {
+            log(MSG_DB_DISCONNECT);
+            log(e);
         } finally {
             jdbc = null;
         }

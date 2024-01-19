@@ -1,6 +1,6 @@
 package bdr.projet.beans;
 
-import bdr.projet.helpers.Transformator;
+import bdr.projet.helpers.Utilities;
 import javafx.scene.image.Image;
 
 import java.net.MalformedURLException;
@@ -65,7 +65,7 @@ public class ModCollection {
         Image defaultImage = new Image(imgPath);
         try {
             URL url = new URL(logo);
-            return Transformator.internetUrlToImage(url, defaultImage);
+            return Utilities.internetUrlToImage(url, defaultImage);
         } catch (MalformedURLException e) {
             return defaultImage;
         }
