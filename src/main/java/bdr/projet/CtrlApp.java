@@ -22,11 +22,22 @@ import bdr.projet.worker.DbWrk;
 
 public class CtrlApp {
 
-
     @FXML
     private AnchorPane ap_main;
     @FXML
-    private MenuBar mb;
+    private AnchorPane ap_home;
+    @FXML
+    private AnchorPane ap_game_image;
+    @FXML
+    private AnchorPane ap_mod_image;
+    @FXML
+    private AnchorPane ap_collections;
+    @FXML
+    private AnchorPane ap_c_mod_image;
+    @FXML
+    private AnchorPane ap_manage;
+    @FXML
+    private AnchorPane ap_logs;
     @FXML
     private Menu m_user;
     @FXML
@@ -46,6 +57,10 @@ public class CtrlApp {
     @FXML
     private Tab t_logs;
     @FXML
+    private Tab t_mod_description;
+    @FXML
+    private Tab t_mod_comments;
+    @FXML
     private Label l_mods;
     @FXML
     private Label l_games;
@@ -56,7 +71,9 @@ public class CtrlApp {
     @FXML
     private TextFlow tf_logs;
     @FXML
-    private TextFlow tf_mod;
+    private TextFlow tf_mod_description;
+    @FXML
+    private TextFlow tf_mod_comments;
     @FXML
     private ImageView imv_mod;
     @FXML
@@ -124,6 +141,11 @@ public class CtrlApp {
         cmb_game.setOnAction(actionEvent -> {
             Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
             lv_mods.getItems().setAll(db.getMods(gameSelected));
+            if (lv_mods.getItems().isEmpty()){
+                t_mod_description.setDisable(true);
+                t_mod_comments.setDisable(true);
+            }
+
             imv_game.setImage(gameSelected.getLogo());
         });
         cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
@@ -131,6 +153,14 @@ public class CtrlApp {
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
             Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
+            if(modSelected == null) {
+                t_mod_description.setDisable(true);
+                t_mod_comments.setDisable(true);
+                return;
+            } else {
+                t_mod_description.setDisable(false);
+                t_mod_comments.setDisable(false);
+            }
             lv_mod.getItems().setAll(screenshotsToString(modSelected.getScreenshots()));
             lv_mod.setOnMouseClicked(mouseEvent1 -> {
                 String screenshotSelected = lv_mod.getSelectionModel().getSelectedItem();
@@ -138,7 +168,13 @@ public class CtrlApp {
                         ? modSelected.getLogo()
                         : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
             });
-            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink()));
+            tf_mod_description.getChildren().setAll(
+                    new Text(modSelected.getDescription() + "\nUsers noted this mod " +modSelected.getNote() + "/6\nDownload at: "),
+                    new Hyperlink(modSelected.getDownloadLink()));
+            ArrayList<Text> t = new ArrayList<>();
+            for (Comment c : modSelected.getComments()) t.add(new Text(c.toString()));
+            tf_mod_comments.getChildren().setAll(t.reversed());
+
             imv_mod.setImage(modSelected.getLogo());
         });
 
@@ -184,6 +220,11 @@ public class CtrlApp {
         disconnect();
     }
 
+    @FXML
+    protected void comment(){
+
+    }
+
     private void log(String message) {
         String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
         tf_logs.getChildren().addFirst(new Text(now + " " + message + "\n"));
@@ -191,15 +232,17 @@ public class CtrlApp {
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
         ArrayList<String> res = new ArrayList<>();
-        res.add("Screenshots:");
-        for (int i = 1; i <= screenshots.size(); i++) res.add(String.valueOf(i));
+        res.add("Logo");
+        for (int i = 1; i < screenshots.size(); i++) res.add("Screenshot " + i);
         return res;
     }
 
     void setCSS() {
-        //add css. ref : https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
-        // Examples:
-        /*  inline:
+        /*add css.
+          ref : https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
+
+          Examples:
+            inline:
                 l_welcome.setStyle("-fx-background-color: darkslateblue; -fx-text-fill: white;");
             with class:
                 l_welcome.getStyleClass().add("custom-css-class");
@@ -207,9 +250,7 @@ public class CtrlApp {
                 l_welcome.setId("custom-css-id");
          */
 
-        //set id
-        ap_main.setId("ap.main");
-        mb.setId("mb");
+        //set id TODO clean up
         m_user.setId("m-user");
         mi_change.setId("mi-change");
         mi_disconnect.setId("mi-disconnect");
@@ -219,19 +260,31 @@ public class CtrlApp {
         t_collections.setId("t-collections");
         t_manage_db.setId("t-manage-db");
         t_logs.setId("t-logs");
+        t_mod_description.setId("t-mod-description");
+        t_mod_comments.setId("t-mod-comments");
         tf_logs.setId("tf-logs");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
         lv_mod.setId("lv-mod");
-        tf_mod.setId("tf-mod");
+        tf_mod_description.setId("tf-mod-description");
+        tf_mod_comments.setId("tf-mod-comments");
         imv_mod.setId("imv-mod");
         imv_game.setId("imv-game");
         l_games.setId("l-mods");
         cmb_game.setId("cmb-games");
 
         //set classes
-        l_mods.getStyleClass().add("l");
-        l_games.getStyleClass().add("l");
+        ap_main.getStyleClass().add("ap");
+        ap_logs.getStyleClass().add("ap");
+        ap_home.getStyleClass().add("ap");
+        ap_game_image.getStyleClass().add("ap");
+        ap_mod_image.getStyleClass().add("ap");
+        ap_collections.getStyleClass().add("ap");
+        ap_c_mod_image.getStyleClass().add("ap");
+        ap_manage.getStyleClass().add("ap");
+        tf_logs.getStyleClass().add("tf");
+        tf_mod_comments.getStyleClass().add("tf");
+        tf_mod_description.getStyleClass().add("tf");
     }
 
     String connectDb() {

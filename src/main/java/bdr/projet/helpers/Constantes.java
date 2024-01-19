@@ -26,10 +26,13 @@ public class Constantes {
 
     //DB REQUEST
     public final static String DB_RQ_GET_MODS = "SELECT * FROM mod;";
+    public final static String DB_RQ_GET_SCREENSHOTS = "SELECT img_path FROM screenshot WHERE fk_mod_name = ? AND fk_mod_game_name = ?;";
+    public final static String DB_RQ_GET_NOTE = "SELECT mean(value) FROM note WHERE fk_mod_name = ? AND fk_mod_game_name = ?;";
     public final static String DB_RQ_GET_GAMES = "SELECT name, logo FROM game;";
     public final static String DB_RQ_GET_USERS = "SELECT name, password FROM _user;";
     public final static String DB_RQ_CREATE_USER = "INSERT INTO _user VALUES (?, ?, ?);";
     public final static String DB_RQ_UPDATE_USER = "UPDATE _user SET password=?, isadmin=? WHERE name=?;";
     public final static String DB_RQ_DELETE_USER = "DELETE FROM _user WHERE name=?;";
+    public final static String DB_RQ_GET_COMMENTS = "SELECT * FROM comment;";
 
 }

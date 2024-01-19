@@ -1,101 +1,67 @@
-.custom-css-class {
-    -fx-font: 16px "Serif";
-    -fx-padding: 10;
-    -fx-background-color: #CCFF99;
+/*ref:
+    -https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
+    -https://guigarage.com/2015/11/styling-a-javafx-scrollbar/
+    -https://dx.dragan.ba/javafx-tabpane-custom-css/
+ */
+
+/*Color theme*/
+.ap, .scroll-pane,
+.menu-bar, .menu-item, .menu,
+.scroll-bar,
+.label, .tf {
+    -fx-background-color: #414141;
 }
 
-#custom-css-id {
-    -fx-font: bold italic 20pt "Arial";
-    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+.thumb {
+    -fx-background-color: #AAAAAA;
 }
 
-#ap-main {
+.menu-button, .menu-item,
+.label {
+    -fx-text-fill: #AAAAAA;
 }
 
-#mb {
-
+.tf > Text {
+    -fx-fill: #AAAAAA
 }
 
-#m-user:hover {
-    -fx-opacity: 0;
+.tab-pane {
+    -fx-primary-color: #414141;
+    -fx-secondary-color: #AAAAAA;
+}
+
+.tab-pane .tab-header-area .tab-header-background, .tab {
+    -fx-background-color: -fx-primary-color;
+    -fx-focus-color: -fx-primary-color;
+}
+
+.tab .tab-label {
+    -fx-text-fill: -fx-secondary-color;
+}
+
+
+/*Menu management*/
+.menu-item {
+    /*TODO*/
+}
+
+.menu-bar, .menu-item, .split-menu-button, .menu, .menu-button:hover {
+    -fx-opacity: 100;
+}
+
+.menu-button, .menu-item {
+    -fx-font-weight: normal;
+}
+
+.menu-button:hover, .menu-item:hover {
+    -fx-font-weight: bold;
 }
 
 #m-user .label {
-    -fx-font-style: bold;
     -fx-text-fill: green;
 }
 
-#mi-change {
-
-}
-
-#mi-disconnect {
-
-}
-
-#mi-delete {
-
-}
-
-#tp {
-    -fx-background-color: #414141;
-
-}
-
-#t-home {
-
-}
-
-#t-collections {
-
-}
-
-#t-manage-db {
-
-}
-
-#t-logs {
-
-}
-
-#tf-logs {
-
-}
-
-#l-mods {
-
-}
-
-#lv-mods {
-
-}
-
-#lv-mod {
-
-}
-
-#tf-mod {
-
-}
-
-#imv-mod {
-
-}
-
-#l-games {
-
-}
-
-#cmb-games {
-
-}
-
-#imv-game {
-
-}
-
-.l {
-    -fx-background-color: #414141;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-style: bold;
+/*Tab management*/
+.tab .tab-label:hover {
+    -fx-font-weight: bold;
 }
