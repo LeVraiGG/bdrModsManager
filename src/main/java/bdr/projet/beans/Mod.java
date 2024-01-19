@@ -11,49 +11,51 @@ import java.util.Objects;
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
 
 public class Mod {
-    private String name;
-    private Game game;
+    private final String name;
+    private final Game game;
     private ArrayList<String> images;
-    private String desciption;
+    private String description;
     private String downloadLink;
     private int nbDownload;
-    private Modder creator;
-    private ArrayList<Mod> dependencies;
-    private String version;
-    private ArrayList<String> impacts;
+    private double note;
+
+    private ArrayList<Comment> comments;
 
 
-    public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload) { //TODO manage versions, impact, ...
-        if (game == null) throw new RuntimeException();
+    public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload) throws RuntimeException {
+        this(name, game, logo, description, downloadLink, nbDownload, 3);
+    }
+
+    public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload, double note) throws RuntimeException {
+        //TODO manage version, impact, moder, dependence, comment
+        if (game == null || name == null || name.isEmpty() || downloadLink == null || downloadLink.isEmpty() || nbDownload < 0)
+            throw new RuntimeException("Mod is invalid: " + game + ":" + name + ":" + downloadLink + ":" + nbDownload);
         this.name = name;
-        this.game = game;
-        images = new ArrayList<>();
-        images.add(logo);
-        this.desciption = description == null ? "" : description;
+        this.game = new Game(game); //get a copy to be sure to don't modify the original game from here
+        this.description = description == null ? "" : description;
         this.downloadLink = downloadLink;
         this.nbDownload = nbDownload;
+        this.note = note > 6 || note < 0 ? 3 : note;
+
+        images = new ArrayList<>();
+        images.add(logo);
+
+        comments = new ArrayList<>();
     }
 
     // Constructeur de copie pour la copie profonde
-    public Mod(Mod other) {
-        this(other.getName(), other.getGame(), other.getLogoUrl(), other.getDesciption(), other.getDownloadLink(), other.getNbDownload());
+    public Mod(Mod other) throws RuntimeException {
+        this(other.getName(), other.getGame(), other.getLogoUrl(), other.getDescription(), other.getDownloadLink(), other.getNbDownload(), other.getNote());
         images.addAll(other.getScreenshots());
+        comments.addAll(other.getComments());
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Game getGame() {
         return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 
     public String getLogoUrl() {
@@ -93,15 +95,16 @@ public class Mod {
     }
 
     public void addScreenshot(String image) {
+        if (image == null || image.isEmpty()) return;
         images.add(image);
     }
 
-    public String getDesciption() {
-        return desciption;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesciption(String desciption) {
-        this.desciption = desciption;
+    public void setDescription(String description) {
+        this.description = description == null ? "" : description;
     }
 
     public int getNbDownload() {
@@ -109,6 +112,7 @@ public class Mod {
     }
 
     public void setNbDownload(int nbDownload) {
+        if (nbDownload < 0) return;
         this.nbDownload = nbDownload;
     }
 
@@ -117,7 +121,26 @@ public class Mod {
     }
 
     public void setDownloadLink(String downloadLink) {
+        if (downloadLink == null || downloadLink.isEmpty()) return;
         this.downloadLink = downloadLink;
+    }
+
+    public double getNote() {
+        return note;
+    }
+
+    public void setNote(double note) {
+        if (note > 6 || note < 0) return;
+        this.note = note;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void addComment(Comment comment) {
+        if (comment == null) return;
+        this.comments = comments;
     }
 
     @Override

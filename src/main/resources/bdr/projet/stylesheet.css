@@ -1,16 +1,24 @@
-/*General Theme*/
+/*ref:
+    -https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
+    -https://guigarage.com/2015/11/styling-a-javafx-scrollbar/
+    -https://dx.dragan.ba/javafx-tabpane-custom-css/
+ */
 
-.ap,
-.tab-pane, .tab,
-.menu, .menu-bar, .menu-item,
-.scroll-pane, .scroll-bar,
-.label {
+/*Color theme*/
+.ap, .scroll-pane,
+.menu-bar, .menu-item, .menu,
+.scroll-bar,
+.label, .tf {
     -fx-background-color: #414141;
+}
+
+.thumb {
+    -fx-background-color: #AAAAAA;
 }
 
 .menu-item,
 .label {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #AAAAAA;
     -fx-font-weight: normal;
 }
 
@@ -18,87 +26,32 @@
     -fx-font-weight: bold;
 }
 
-.scroll-bar .thumb {
-    -fx-background-color: #AAAAAA;
+.tf > Text {
+    -fx-fill: #AAAAAA;
 }
 
-#ap-main {
+.tab-pane {
+    -fx-primary-color: #414141;
+    -fx-secondary-color: #AAAAAA;
 }
 
-#mb {
-
+.tab-pane .tab-header-area .tab-header-background, .tab {
+    -fx-background-color: -fx-primary-color;
+    -fx-focus-color: -fx-primary-color;
 }
 
+.tab .tab-label {
+    -fx-text-fill: -fx-secondary-color;
+}
+
+
+/*Menu management*/
 #m-user .label {
     -fx-font-weight: bold;
     -fx-text-fill: green;
 }
 
-#mi-change {
-
-}
-
-#mi-disconnect {
-
-}
-
-#mi-delete {
-
-}
-
-#tp-main {
-    -fx-background-color: #414141;
-
-}
-
-#t-home {
-
-}
-
-#t-collections {
-
-}
-
-#t-manage {
-
-}
-
-#t-logs {
-
-}
-
-#tf-logs {
-
-}
-
-#l-mods {
-
-}
-
-#lv-mods {
-
-}
-
-#lv-mod {
-
-}
-
-#tf-mod {
-
-}
-
-#imv-mod {
-
-}
-
-#l-games {
-
-}
-
-#cmb-games {
-
-}
-
-#imv-game {
-
+/*Tab management*/
+.tab .tab-label:hover {
+    -fx-font-weight: bold;
 }

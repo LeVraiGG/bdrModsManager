@@ -11,25 +11,23 @@ import java.util.Objects;
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
 
 public class Game {
-    private String name;
+    private final String name;
     private String logo;
 
-    public Game(String name, String logo) {
+    public Game(String name, String logo) throws RuntimeException {
+        if (name == null || name.isEmpty())
+            throw new RuntimeException("Game is invalid: " + name);
         this.name = name;
         this.logo = logo;
     }
 
     // Constructeur de copie pour la copie profonde
-    public Game(Game other) {
+    public Game(Game other) throws RuntimeException {
         this(other.getName(), other.getLogoUrl());
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getLogoUrl() {

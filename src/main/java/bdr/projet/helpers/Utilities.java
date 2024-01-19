@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -29,6 +30,12 @@ public class Utilities {
 
     public static String encryptSHA256(String s) {
         return Hashing.sha256().hashString(s, StandardCharsets.UTF_8).toString();
+    }
+
+    public static ArrayList<String> objectsToString(ArrayList<?> objects) {
+        ArrayList<String> res = new ArrayList<>();
+        for (int i = 0; i < objects.size(); ++i) res.add(objects.toString());
+        return res;
     }
 
     public static String getDate(TemporalAccessor date) {

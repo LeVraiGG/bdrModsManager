@@ -23,7 +23,6 @@ import bdr.projet.worker.DbWrk;
 
 public class CtrlApp {
 
-
     @FXML
     private AnchorPane ap_main;
     @FXML
@@ -69,6 +68,10 @@ public class CtrlApp {
     @FXML
     private Tab t_logs;
     @FXML
+    private Tab t_mod_description;
+    @FXML
+    private Tab t_mod_comments;
+    @FXML
     private Tab t_logs_general;
     @FXML
     private Tab t_logs_user;
@@ -89,7 +92,9 @@ public class CtrlApp {
     @FXML
     private TextFlow tf_logs_user;
     @FXML
-    private TextFlow tf_mod;
+    private TextFlow tf_mod_description;
+    @FXML
+    private TextFlow tf_mod_comments;
     @FXML
     private ImageView imv_mod;
     @FXML
@@ -169,6 +174,11 @@ public class CtrlApp {
         cmb_game.setOnAction(actionEvent -> {
             Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
             lv_mods.getItems().setAll(db.getMods(gameSelected));
+            if (lv_mods.getItems().isEmpty()) {
+                t_mod_description.setDisable(true);
+                t_mod_comments.setDisable(true);
+            }
+
             imv_game.setImage(gameSelected.getLogo());
         });
         cmb_game.setValue(cmb_game.getItems().getFirst()); //don't need to check if empty because our app, without game on db is just a nonsense
@@ -176,14 +186,28 @@ public class CtrlApp {
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
             Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
+            if (modSelected == null) {
+                t_mod_description.setDisable(true);
+                t_mod_comments.setDisable(true);
+                return;
+            } else {
+                t_mod_description.setDisable(false);
+                t_mod_comments.setDisable(false);
+            }
             lv_mod.getItems().setAll(screenshotsToString(modSelected.getScreenshots()));
             lv_mod.setOnMouseClicked(mouseEvent1 -> {
-                String screenshotSelected = lv_mod.getSelectionModel().getSelectedItem();
-                imv_mod.setImage(screenshotSelected.equals("Screenshots:")
+                int index = lv_mod.getSelectionModel().getSelectedIndex();
+                imv_mod.setImage(index == 0
                         ? modSelected.getLogo()
-                        : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
+                        : modSelected.getScreenshot(index));
             });
-            tf_mod.getChildren().setAll(new Text(modSelected.getDesciption() + "\nDownload at: "), new Hyperlink(modSelected.getDownloadLink()));
+            tf_mod_description.getChildren().setAll(
+                    new Text(modSelected.getDescription() + "\nUsers noted this mod " + modSelected.getNote() + "/6\nDownload at: "),
+                    new Hyperlink(modSelected.getDownloadLink()));
+            ArrayList<Text> t = new ArrayList<>();
+            for (Comment c : modSelected.getComments()) t.add(new Text(c.toString()));
+            tf_mod_comments.getChildren().setAll(t.reversed());
+
             imv_mod.setImage(modSelected.getLogo());
         });
 
@@ -337,6 +361,11 @@ public class CtrlApp {
     }
 
     @FXML
+    protected void comment() {
+        //TODO
+    }
+
+    @FXML
     protected void showLogs() {
         ModCollection mc = Popups.askElInAList("Select Mod Collection", "Select a Mod Collection to show its logs", "Mod collections:",
                 new ArrayList<>(cmb_mod_collections.getItems()));
@@ -346,32 +375,33 @@ public class CtrlApp {
             tf_logs_user.getChildren().addFirst(new Text(log + "\n"));
         tp_logs.getSelectionModel().select(t_logs_user);
         tp_main.getSelectionModel().select(t_logs);
-
     }
 
     public void log(String message) {
-        tf_logs_general.getChildren().addFirst(new Text(Utilities.getNow() + " " + message + "\n"));
+        tf_logs_general.getChildren().addFirst(new Text("[" + Utilities.getNow() + "] " + message + "\n"));
     }
 
     public void log(Exception e) {
-        Hyperlink linkException = new Hyperlink("Show details");
+        Hyperlink linkException = new Hyperlink("\tShow details");
         linkException.setOnMouseClicked(mouseEvent -> Popups.exceptionHandle("Details", e));
         tf_logs_general.getChildren().addFirst(linkException);
-        tf_logs_general.getChildren().addFirst(new Text(Utilities.getNow() + " " + e.getClass() + "\n\t"));
+        tf_logs_general.getChildren().addFirst(new Text("[" + Utilities.getNow() + "] " + e.getClass() + "\n"));
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
         ArrayList<String> res = new ArrayList<>();
-        res.add("Screenshots:");
-        for (int i = 1; i <= screenshots.size(); i++) res.add(String.valueOf(i));
+        res.add("Logo");
+        for (int i = 1; i < screenshots.size(); i++) res.add("Screenshot " + i);
         return res;
     }
 
 
     void setCSS() {
-        //add css. ref : https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
-        // Examples:
-        /*  inline:
+        /*add css.
+          ref : https://docs.oracle.com/javafx/2/css_tutorial/jfxpub-css_tutorial.htm#BJEJGIGC
+
+          Examples:
+            inline:
                 l_welcome.setStyle("-fx-background-color: darkslateblue; -fx-text-fill: white;");
             with class:
                 l_welcome.getStyleClass().add("custom-css-class");
@@ -391,11 +421,15 @@ public class CtrlApp {
         t_collections.setId("t-collections");
         t_manage.setId("t-manage");
         t_logs.setId("t-logs");
-        tf_logs_general.setId("tf-logs");
+        t_mod_description.setId("t-mod-description");
+        t_mod_comments.setId("t-mod-comments");
+        tf_logs_general.setId("tf-logs-general");
+        tf_logs_user.setId("tf-logs-user");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
         lv_mod.setId("lv-mod");
-        tf_mod.setId("tf-mod");
+        tf_mod_description.setId("tf-mod-description");
+        tf_mod_comments.setId("tf-mod-comments");
         imv_mod.setId("imv-mod");
         imv_game.setId("imv-game");
         l_games.setId("l-mods");
@@ -411,6 +445,10 @@ public class CtrlApp {
         ap_collection_vbox.getStyleClass().add("ap");
         ap_manage.getStyleClass().add("ap");
         ap_logs.getStyleClass().add("ap");
+        tf_mod_comments.getStyleClass().add("tf");
+        tf_mod_description.getStyleClass().add("tf");
+        tf_logs_general.getStyleClass().add("tf");
+        tf_logs_user.getStyleClass().add("tf");
 
         //setCSSOnDisconnect();
     }

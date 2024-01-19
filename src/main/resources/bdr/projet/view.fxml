@@ -69,12 +69,29 @@
                     <AnchorPane fx:id="ap_mod_img" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                         <ImageView fx:id="imv_mod" fitHeight="115.0" fitWidth="200.0" layoutY="-9.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0" />
                     </AnchorPane>
-                    <ScrollPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <TabPane GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <GridPane.margin>
                             <Insets bottom="5.0" left="5.0" right="10.0" top="20.0" />
                         </GridPane.margin>
-                        <TextFlow fx:id="tf_mod" prefHeight="200.0" prefWidth="200.0" />
-                    </ScrollPane>
+                        <Tab fx:id="t_mod_description" closable="false" disable="true"
+                             text="Description">
+                            <ScrollPane>
+                                <TextFlow fx:id="tf_mod_description" prefHeight="200.0"
+                                          prefWidth="200.0"/>
+                            </ScrollPane>
+                        </Tab>
+                        <Tab fx:id="t_mod_comments" closable="false" disable="true" text="Comments">
+                            <VBox prefHeight="200.0" prefWidth="100.0">
+                                <ScrollPane>
+                                    <TextFlow fx:id="tf_mod_comments" prefHeight="200.0"
+                                              prefWidth="200.0">
+                                    </TextFlow>
+                                </ScrollPane>
+                                <Button mnemonicParsing="false" onAction="#comment" text="Comment">
+                                </Button>
+                            </VBox>
+                        </Tab>
+                    </TabPane>
                 </GridPane>
             </AnchorPane>
         </Tab>
@@ -107,9 +124,17 @@
                         </GridPane.margin>
                     </Label>
                     <AnchorPane fx:id="ap_collection_img" GridPane.columnIndex="1">
-                        <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="4.599999999999994" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.60000000000002" AnchorPane.topAnchor="4.0" />
-                        <AnchorPane fx:id="ap_collection_vbox" layoutX="1.0" layoutY="24.0" prefHeight="112.0" prefWidth="295.0">
-                            <VBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0"
+                                   pickOnBounds="true" preserveRatio="true"
+                                   AnchorPane.bottomAnchor="4.599999999999994"
+                                   AnchorPane.leftAnchor="50.0"
+                                   AnchorPane.rightAnchor="50.60000000000002"
+                                   AnchorPane.topAnchor="4.0"/>
+                        <AnchorPane fx:id="ap_collection_vbox" layoutX="1.0" layoutY="24.0" prefHeight="112.0"
+                                    prefWidth="295.0">
+                            <VBox prefHeight="100.0" prefWidth="200.0" spacing="10.0"
+                                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <padding>
                                     <Insets left="5.0" top="10.0" />
                                 </padding>

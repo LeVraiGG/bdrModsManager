@@ -35,6 +35,8 @@ public class Constantes {
 
     //DB REQUEST
     public final static String DB_RQ_GET_MODS = "SELECT * FROM mod;";
+    public final static String DB_RQ_GET_SCREENSHOTS = "SELECT img_path FROM screenshot WHERE fk_mod_name = ? AND fk_mod_game_name = ?;";
+    public final static String DB_RQ_GET_NOTE = "SELECT mean(value) FROM note WHERE fk_mod_name = ? AND fk_mod_game_name = ?;";
     public final static String DB_RQ_GET_GAMES = "SELECT name, logo FROM game;";
     public final static String DB_RQ_GET_USERS = "SELECT name, password FROM _user;";
     public final static String DB_RQ_GET_MOD_COLLECTION_LOGS1 = "SELECT * FROM ";
@@ -49,5 +51,6 @@ public class Constantes {
     public final static String DB_RQ_CREATE_MOD_COLLECTION_MOD = "INSERT INTO mod_mod_collection VALUES (?, ?, ?, ?);";
     public final static String DB_RQ_DELETE_MOD_COLLECTION_MOD = "DELETE FROM mod_mod_collection WHERE fk_mod_name=? AND fk_mod_game_name=? AND fk_mod_collection_name=? AND fk_mod_collection_user_name=?;";
 
+    public final static String DB_RQ_GET_COMMENTS = "SELECT * FROM comment;";
 
 }
