@@ -16,13 +16,18 @@
     -fx-background-color: #AAAAAA;
 }
 
-.menu-button, .menu-item,
+.menu-item,
 .label {
     -fx-text-fill: #AAAAAA;
+    -fx-font-weight: normal;
+}
+
+.label:hover {
+    -fx-font-weight: bold;
 }
 
 .tf > Text {
-    -fx-fill: #AAAAAA
+    -fx-fill: #AAAAAA;
 }
 
 .tab-pane {
@@ -41,23 +46,8 @@
 
 
 /*Menu management*/
-.menu-item {
-    /*TODO*/
-}
-
-.menu-bar, .menu-item, .split-menu-button, .menu, .menu-button:hover {
-    -fx-opacity: 100;
-}
-
-.menu-button, .menu-item {
-    -fx-font-weight: normal;
-}
-
-.menu-button:hover, .menu-item:hover {
-    -fx-font-weight: bold;
-}
-
 #m-user .label {
+    -fx-font-weight: bold;
     -fx-text-fill: green;
 }
 

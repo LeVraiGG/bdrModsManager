@@ -1,6 +1,7 @@
 package bdr.projet;
 
-import bdr.projet.helpers.Transformator;
+import bdr.projet.helpers.Utilities;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -9,8 +10,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static bdr.projet.helpers.Constantes.*;
@@ -27,17 +26,21 @@ public class CtrlApp {
     @FXML
     private AnchorPane ap_home;
     @FXML
-    private AnchorPane ap_game_image;
+    private AnchorPane ap_game_img;
     @FXML
-    private AnchorPane ap_mod_image;
+    private AnchorPane ap_mod_img;
     @FXML
     private AnchorPane ap_collections;
     @FXML
-    private AnchorPane ap_c_mod_image;
+    private AnchorPane ap_collection_img;
+    @FXML
+    private AnchorPane ap_collection_vbox;
     @FXML
     private AnchorPane ap_manage;
     @FXML
     private AnchorPane ap_logs;
+    @FXML
+    private MenuBar mb;
     @FXML
     private Menu m_user;
     @FXML
@@ -49,17 +52,23 @@ public class CtrlApp {
     @FXML
     private TabPane tp;
     @FXML
+    private TabPane tp_logs;
+    @FXML
     private Tab t_home;
     @FXML
     private Tab t_collections;
     @FXML
-    private Tab t_manage_db;
+    private Tab t_manage;
     @FXML
     private Tab t_logs;
     @FXML
     private Tab t_mod_description;
     @FXML
     private Tab t_mod_comments;
+    @FXML
+    private Tab t_logs_general;
+    @FXML
+    private Tab t_logs_user;
     @FXML
     private Label l_mods;
     @FXML
@@ -69,7 +78,13 @@ public class CtrlApp {
     @FXML
     private ListView<String> lv_mod;
     @FXML
-    private TextFlow tf_logs;
+    private ListView<Mod> lv_mod_collection_mods;
+    @FXML
+    private ListView<Mod> lv_mods_available;
+    @FXML
+    private TextFlow tf_logs_general;
+    @FXML
+    private TextFlow tf_logs_user;
     @FXML
     private TextFlow tf_mod_description;
     @FXML
@@ -80,6 +95,8 @@ public class CtrlApp {
     private ImageView imv_game;
     @FXML
     private ComboBox<Game> cmb_game;
+    @FXML
+    private ComboBox<ModCollection> cmb_mod_collections;
     private PostgesqlJDBC jdbc;
     private DbWrk db;
     private User connectedUser;
@@ -91,17 +108,18 @@ public class CtrlApp {
     @FXML
     protected void quit() {
         disconnect();
+        Platform.exit();
     }
 
     @FXML
     protected void connect() {
-        log(connectDb()); //try to connect to db and give a feedback
+        connectDb();
 
 
         if (jdbc == null || !jdbc.isConnect()) return;
 
         //if db connected we can connect users (and get others information from db)
-        db = new DbWrk(jdbc);
+        db = new DbWrk(jdbc, this);
         // User connection
         boolean haveAccount = Popups.ask("Connection", "Step 1", MSG_USER_CONNECTION_STEP1);
         if (!haveAccount) {
@@ -111,7 +129,7 @@ public class CtrlApp {
         String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
 
         ArrayList<User> users = db.getUsers();
-        User user = new User(username, Transformator.encryptSHA256(password));
+        User user = new User(username, Utilities.encryptSHA256(password));
 
         if (haveAccount) {
             boolean validUser = false;
@@ -124,16 +142,18 @@ public class CtrlApp {
 
             if (!validUser) {
                 log(MSG_USER_CONNECT_FAILURE);
+                Popups.error("Login Error", MSG_USER_CONNECT_FAILURE);
                 return;
             }
         } else {
             db.createUser(user);
-            log(MSG_USER_CREATED);
+            log(MSG_USER_CREATED + " " + user);
         }
 
         //User is connected, we can set the UI
         connectedUser = user;
         m_user.setText("Connected as : " + connectedUser);
+        log("Connected as : " + connectedUser);
 
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
@@ -141,7 +161,7 @@ public class CtrlApp {
         cmb_game.setOnAction(actionEvent -> {
             Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
             lv_mods.getItems().setAll(db.getMods(gameSelected));
-            if (lv_mods.getItems().isEmpty()){
+            if (lv_mods.getItems().isEmpty()) {
                 t_mod_description.setDisable(true);
                 t_mod_comments.setDisable(true);
             }
@@ -153,7 +173,7 @@ public class CtrlApp {
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
             Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
-            if(modSelected == null) {
+            if (modSelected == null) {
                 t_mod_description.setDisable(true);
                 t_mod_comments.setDisable(true);
                 return;
@@ -163,13 +183,13 @@ public class CtrlApp {
             }
             lv_mod.getItems().setAll(screenshotsToString(modSelected.getScreenshots()));
             lv_mod.setOnMouseClicked(mouseEvent1 -> {
-                String screenshotSelected = lv_mod.getSelectionModel().getSelectedItem();
-                imv_mod.setImage(screenshotSelected.equals("Screenshots:")
+                int index = lv_mod.getSelectionModel().getSelectedIndex();
+                imv_mod.setImage(index == 0
                         ? modSelected.getLogo()
-                        : modSelected.getScreenshot(Integer.parseInt(screenshotSelected)));
+                        : modSelected.getScreenshot(index));
             });
             tf_mod_description.getChildren().setAll(
-                    new Text(modSelected.getDescription() + "\nUsers noted this mod " +modSelected.getNote() + "/6\nDownload at: "),
+                    new Text(modSelected.getDescription() + "\nUsers noted this mod " + modSelected.getNote() + "/6\nDownload at: "),
                     new Hyperlink(modSelected.getDownloadLink()));
             ArrayList<Text> t = new ArrayList<>();
             for (Comment c : modSelected.getComments()) t.add(new Text(c.toString()));
@@ -178,10 +198,31 @@ public class CtrlApp {
             imv_mod.setImage(modSelected.getLogo());
         });
 
+        /*Mod Collections*/
+        cmb_mod_collections.getItems().setAll(db.getModCollection(connectedUser));
+
+        cmb_mod_collections.setOnAction(actionEvent -> {
+            ModCollection modCollectionSelected = cmb_mod_collections.getSelectionModel().getSelectedItem();
+            lv_mod_collection_mods.getItems().setAll(modCollectionSelected.getMods());
+            ArrayList<Mod> modAvailable = new ArrayList<>();
+            for (Mod m : db.getMods(modCollectionSelected.getGame())) {
+                if (!modCollectionSelected.getMods().contains(m)) modAvailable.add(m);
+            }
+            lv_mods_available.getItems().setAll(modAvailable);
+        });
+        if (!cmb_mod_collections.getItems().isEmpty())
+            cmb_mod_collections.setValue(cmb_mod_collections.getItems().get(0));
+
+
         //Update tabs
         t_home.setDisable(false);
         t_collections.setDisable(false);
-        //t_manage_db.setDisable(false);
+        //t_manage.setDisable(false);
+        if (connectedUser.isAdmin()) {
+            t_logs_general.setDisable(false);
+            tf_logs_general.setVisible(true);
+        }
+        t_logs_user.setDisable(false);
 
         mi_change.setDisable(false);
         mi_disconnect.setDisable(false);
@@ -194,8 +235,11 @@ public class CtrlApp {
     protected void disconnect() {
         t_home.setDisable(true);
         t_collections.setDisable(true);
-        //t_manage_db.setDisable(true);
+        //t_manage.setDisable(true);
+        t_logs_general.setDisable(true);
+        tf_logs_general.setVisible(false);
         tp.getSelectionModel().select(t_logs);
+        tf_logs_user.setDisable(true);
 
         mi_change.setDisable(true);
         mi_disconnect.setDisable(true);
@@ -204,13 +248,12 @@ public class CtrlApp {
         m_user.setText("");
         connectedUser = null;
         log(MSG_USER_DISCONNECT);
-        log(disconnectDb());
     }
 
     @FXML
     protected void updatePassword() {
         String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
-        connectedUser.setPassword(Transformator.encryptSHA256(password));
+        connectedUser.setPassword(Utilities.encryptSHA256(password));
         db.updateUser(connectedUser);
     }
 
@@ -221,13 +264,79 @@ public class CtrlApp {
     }
 
     @FXML
-    protected void comment(){
-
+    protected void createCollection() {
+        String name = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER1, MSG_CREATE_COLLECTION1);
+        String path = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER2, MSG_CREATE_COLLECTION2);//TODO fileManager
+        String logo = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER3, MSG_CREATE_COLLECTION3);
+        String description = Popups.askText(MSG_CREATE_COLLECTION_TITLE, MSG_CREATE_COLLECTION_HEADER4, MSG_CREATE_COLLECTION4);
+        ModCollection mc = new ModCollection(name, connectedUser, path, logo.isBlank() ? null : logo, description, null);
+        db.createModCollection(mc);
+        if (db.getModCollection(connectedUser).contains(mc)) {
+            cmb_mod_collections.getItems().add(mc);
+            cmb_mod_collections.getSelectionModel().select(mc);
+        }
     }
 
-    private void log(String message) {
-        String now = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
-        tf_logs.getChildren().addFirst(new Text(now + " " + message + "\n"));
+    @FXML
+    protected void deleteCollection() {
+        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
+        db.deleteModCollection(mc);
+        if (!db.getModCollection(connectedUser).contains(mc)) {
+            cmb_mod_collections.getItems().remove(mc);
+            if (!cmb_mod_collections.getItems().isEmpty()) cmb_mod_collections.getSelectionModel().select(0);
+        }
+    }
+
+    @FXML
+    protected void addSelectedMod() {
+        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
+        Mod m = lv_mods_available.getSelectionModel().getSelectedItem();
+        mc.addMod(m);
+        if (mc.getMods().contains(m)) { //should be always true but w/e
+            db.addModCollectionMod(m, mc);
+            lv_mod_collection_mods.getItems().add(m);
+            lv_mods_available.getItems().remove(m);
+        }
+    }
+
+    @FXML
+    protected void removeSelectedMod() {
+        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
+        Mod m = lv_mod_collection_mods.getSelectionModel().getSelectedItem();
+        mc.removeMod(m);
+        if (!mc.getMods().contains(m)) { //should be always true but w/e
+            db.removeModCollectionMod(m, mc);
+            lv_mod_collection_mods.getItems().remove(m);
+            lv_mods_available.getItems().add(m);
+        }
+    }
+
+    @FXML
+    protected void comment() {
+        //TODO
+    }
+
+    @FXML
+    protected void showLogs() {
+        ModCollection mc = Popups.askElInAList("Select Mod Collection", "Select a Mod Collection to show its logs", "Mod collections:",
+                new ArrayList<>(cmb_mod_collections.getItems()));
+        ArrayList<String> logs = db.getModCollectionLogs(mc);
+        tf_logs_user.getChildren().clear();
+        for (String log : logs.reversed())
+            tf_logs_user.getChildren().addFirst(new Text(log + "\n"));
+        tp_logs.getSelectionModel().select(t_logs_user);
+        tp.getSelectionModel().select(t_logs);
+    }
+
+    public void log(String message) {
+        tf_logs_general.getChildren().addFirst(new Text("[" + Utilities.getNow() + "] " + message + "\n"));
+    }
+
+    public void log(Exception e) {
+        Hyperlink linkException = new Hyperlink("\tShow details");
+        linkException.setOnMouseClicked(mouseEvent -> Popups.exceptionHandle("Details", e));
+        tf_logs_general.getChildren().addFirst(linkException);
+        tf_logs_general.getChildren().addFirst(new Text("[" + Utilities.getNow() + "] " + e.getClass() + "\n"));
     }
 
     private ArrayList<String> screenshotsToString(ArrayList<String> screenshots) {
@@ -236,6 +345,7 @@ public class CtrlApp {
         for (int i = 1; i < screenshots.size(); i++) res.add("Screenshot " + i);
         return res;
     }
+
 
     void setCSS() {
         /*add css.
@@ -249,8 +359,10 @@ public class CtrlApp {
             with id:
                 l_welcome.setId("custom-css-id");
          */
-
-        //set id TODO clean up
+        //TODO clean up
+        //set id
+        ap_main.setId("ap.main");
+        mb.setId("mb");
         m_user.setId("m-user");
         mi_change.setId("mi-change");
         mi_disconnect.setId("mi-disconnect");
@@ -258,11 +370,12 @@ public class CtrlApp {
         tp.setId("tp");
         t_home.setId("t-home");
         t_collections.setId("t-collections");
-        t_manage_db.setId("t-manage-db");
+        t_manage.setId("t-manage");
         t_logs.setId("t-logs");
         t_mod_description.setId("t-mod-description");
         t_mod_comments.setId("t-mod-comments");
-        tf_logs.setId("tf-logs");
+        tf_logs_general.setId("tf-logs-general");
+        tf_logs_user.setId("tf-logs-user");
         l_mods.setId("l-mods");
         lv_mods.setId("lv-mods");
         lv_mod.setId("lv-mod");
@@ -275,34 +388,41 @@ public class CtrlApp {
 
         //set classes
         ap_main.getStyleClass().add("ap");
-        ap_logs.getStyleClass().add("ap");
         ap_home.getStyleClass().add("ap");
-        ap_game_image.getStyleClass().add("ap");
-        ap_mod_image.getStyleClass().add("ap");
+        ap_game_img.getStyleClass().add("ap");
+        ap_mod_img.getStyleClass().add("ap");
         ap_collections.getStyleClass().add("ap");
-        ap_c_mod_image.getStyleClass().add("ap");
+        ap_collection_img.getStyleClass().add("ap");
+        ap_collection_vbox.getStyleClass().add("ap");
         ap_manage.getStyleClass().add("ap");
-        tf_logs.getStyleClass().add("tf");
+        ap_logs.getStyleClass().add("ap");
         tf_mod_comments.getStyleClass().add("tf");
         tf_mod_description.getStyleClass().add("tf");
+        tf_logs_general.getStyleClass().add("tf");
+        tf_logs_user.getStyleClass().add("tf");
     }
 
-    String connectDb() {
+    /**
+     * try to connect to db and log result
+     */
+    void connectDb() {
         jdbc = new PostgesqlJDBC(URL_PSQL + DB_NAME, DB_USER, DB_PASSWORD);
         try {
             jdbc.connect();
-            return MSG_DB_CONNECT_SUCCESS;
-        } catch (SQLException ex) {
-            return MSG_DB_CONNECT_FAILURE;
+            log(MSG_DB_CONNECT_SUCCESS);
+        } catch (SQLException e) {
+            log(MSG_DB_CONNECT_FAILURE);
+            log(e);
         }
     }
 
-    String disconnectDb() {
+    void disconnectDb() {
         try {
             jdbc.disconnect();
-            return MSG_DB_DISCONNECT;
-        } catch (SQLException ignored) {
-            return MSG_DB_DISCONNECT;
+            log(MSG_DB_DISCONNECT);
+        } catch (SQLException e) {
+            log(MSG_DB_DISCONNECT);
+            log(e);
         } finally {
             jdbc = null;
         }

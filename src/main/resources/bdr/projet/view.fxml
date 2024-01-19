@@ -8,7 +8,7 @@
 
 <AnchorPane fx:id="ap_main" minHeight="450.0" minWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="bdr.projet.CtrlApp">
-    <MenuBar prefHeight="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+    <MenuBar fx:id="mb" prefHeight="25.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
              AnchorPane.topAnchor="0.0">
         <Menu mnemonicParsing="false" text="Menu">
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit"/>
@@ -51,8 +51,7 @@
                             <Insets left="5.0"/>
                         </GridPane.margin>
                     </Label>
-                    <AnchorPane fx:id="ap_game_image" prefHeight="200.0" prefWidth="200.0"
-                                GridPane.columnIndex="1">
+                    <AnchorPane fx:id="ap_game_img" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                         <ImageView fx:id="imv_game" fitHeight="132.0" fitWidth="200.0" layoutX="50.0"
                                    layoutY="4.0" pickOnBounds="true" preserveRatio="true"
                                    AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="50.0"
@@ -77,8 +76,8 @@
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                         </GridPane.margin>
                     </ListView>
-                    <AnchorPane fx:id="ap_mod_image" prefHeight="200.0" prefWidth="200.0"
-                                GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <AnchorPane fx:id="ap_mod_img" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
+                                GridPane.rowIndex="2">
                         <ImageView fx:id="imv_mod" fitHeight="115.0" fitWidth="200.0" layoutY="-9.0"
                                    pickOnBounds="true" preserveRatio="true"
                                    AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="50.0"
@@ -124,7 +123,8 @@
                         <RowConstraints maxHeight="245.4000305175781" minHeight="10.0" prefHeight="140.0"
                                         vgrow="SOMETIMES"/>
                     </rowConstraints>
-                    <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                    <ListView fx:id="lv_mod_collection_mods" prefHeight="200.0" prefWidth="200.0"
+                              GridPane.rowIndex="1">
                         <GridPane.margin>
                             <Insets bottom="40.0" left="5.0" right="5.0" top="20.0"/>
                         </GridPane.margin>
@@ -139,13 +139,33 @@
                             <Insets left="5.0"/>
                         </GridPane.margin>
                     </Label>
-                    <AnchorPane fx:id="ap_c_mod_image" GridPane.columnIndex="1">
+                    <AnchorPane fx:id="ap_collection_img" GridPane.columnIndex="1">
                         <ImageView fitHeight="125.0" fitWidth="221.0" layoutX="50.0" layoutY="4.0"
                                    pickOnBounds="true" preserveRatio="true"
                                    AnchorPane.bottomAnchor="4.599999999999994"
                                    AnchorPane.leftAnchor="50.0"
                                    AnchorPane.rightAnchor="50.60000000000002"
                                    AnchorPane.topAnchor="4.0"/>
+                        <AnchorPane fx:id="ap_collection_vbox" layoutX="1.0" layoutY="24.0" prefHeight="112.0"
+                                    prefWidth="295.0">
+                            <VBox prefHeight="100.0" prefWidth="200.0" spacing="10.0"
+                                  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <padding>
+                                    <Insets left="5.0" top="10.0"/>
+                                </padding>
+                                <Button mnemonicParsing="false" onAction="#createCollection"
+                                        text="Create a Collection"/>
+                                <Button mnemonicParsing="false" onAction="#deleteCollection"
+                                        text="Delete Selected Collection"/>
+                                <Button mnemonicParsing="false" onAction="#showLogs"
+                                        text="Show Logs">
+                                    <HBox.margin>
+                                        <Insets/>
+                                    </HBox.margin>
+                                </Button>
+                            </VBox>
+                        </AnchorPane>
                     </AnchorPane>
                     <HBox prefHeight="100.0" prefWidth="300.0">
                         <Label text="Collection">
@@ -153,27 +173,28 @@
                                 <Insets left="5.0" right="10.0" top="6.0"/>
                             </HBox.margin>
                         </Label>
-                        <ComboBox prefWidth="150.0">
+                        <ComboBox fx:id="cmb_mod_collections" prefWidth="150.0">
                             <HBox.margin>
                                 <Insets top="2.0"/>
                             </HBox.margin>
                         </ComboBox>
                     </HBox>
-                    <Button fx:id="btn_collect_add" mnemonicParsing="false" prefHeight="26.0"
-                            prefWidth="60.0" text="Add" textAlignment="CENTER" GridPane.halignment="CENTER"
-                            GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                    <Button mnemonicParsing="false" onAction="#addSelectedMod" prefHeight="26.0"
+                            prefWidth="91.0" text="Add Selected" textAlignment="CENTER"
+                            GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                         <GridPane.margin>
                             <Insets bottom="7.0"/>
                         </GridPane.margin>
                     </Button>
-                    <Button fx:id="btn_collect_remove" mnemonicParsing="false" prefHeight="26.0"
-                            prefWidth="60.0" text="Remove" GridPane.halignment="CENTER"
+                    <Button mnemonicParsing="false" onAction="#removeSelectedMod" prefHeight="26.0"
+                            prefWidth="111.0" text="Remove Selected" GridPane.halignment="CENTER"
                             GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                         <GridPane.margin>
                             <Insets bottom="7.0"/>
                         </GridPane.margin>
                     </Button>
-                    <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                    <ListView fx:id="lv_mods_available" prefHeight="200.0" prefWidth="200.0"
+                              GridPane.rowIndex="2">
                         <GridPane.margin>
                             <Insets bottom="40.0" left="5.0" right="5.0" top="20.0"/>
                         </GridPane.margin>
@@ -181,7 +202,7 @@
                 </GridPane>
             </AnchorPane>
         </Tab>
-        <Tab fx:id="t_manage_db" disable="true" text="Manage DB">
+        <Tab fx:id="t_manage" disable="true" text="Manage DB">
             <AnchorPane fx:id="ap_manage" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
             </AnchorPane>
         </Tab>
@@ -190,7 +211,15 @@
                 <ScrollPane layoutX="158.0" layoutY="81.0" AnchorPane.bottomAnchor="15.0"
                             AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0"
                             AnchorPane.topAnchor="15.0">
-                    <TextFlow fx:id="tf_logs" prefHeight="365.0" prefWidth="555.0"/>
+                    <TabPane fx:id="tp_logs">
+                        <Tab fx:id="t_logs_general" closable="false" disable="true" text="General">
+                            <TextFlow fx:id="tf_logs_general" prefHeight="365.0" prefWidth="555.0"
+                                      visible="false"/>
+                        </Tab>
+                        <Tab fx:id="t_logs_user" closable="false" disable="true" text="User">
+                            <TextFlow fx:id="tf_logs_user" prefHeight="365.0" prefWidth="555.0"/>
+                        </Tab>
+                    </TabPane>
                 </ScrollPane>
             </AnchorPane>
         </Tab>

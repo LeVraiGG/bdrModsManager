@@ -1,8 +1,10 @@
 package bdr.projet.worker;
 
+import bdr.projet.CtrlApp;
 import bdr.projet.beans.Comment;
 import bdr.projet.beans.Game;
 import bdr.projet.beans.Mod;
+import bdr.projet.beans.ModCollection;
 import bdr.projet.beans.User;
 import bdr.projet.helpers.PostgesqlJDBC;
 
@@ -15,17 +17,20 @@ import static bdr.projet.helpers.Constantes.*;
 
 public class DbWrk {
     PostgesqlJDBC jdbc;
+    CtrlApp ctrl;
 
     ArrayList<Game> games;
     ArrayList<Mod> mods;
     ArrayList<User> users;
+    ArrayList<ModCollection> currentModCollections;
     ArrayList<Comment> comments;
 
     boolean needToFetch = true;
 
-    public DbWrk(PostgesqlJDBC jdbc) throws RuntimeException {
-        if (jdbc == null || !jdbc.isConnect()) throw new RuntimeException(MSG_EX_JDBC_INVALID);
+    public DbWrk(PostgesqlJDBC jdbc, CtrlApp ctrl) throws RuntimeException {
+        if (jdbc == null || !jdbc.isConnect() || ctrl == null) throw new RuntimeException(MSG_EX_JDBC_INVALID);
         this.jdbc = jdbc;
+        this.ctrl = ctrl;
 
         games = new ArrayList<>();
         mods = new ArrayList<>();
@@ -36,16 +41,10 @@ public class DbWrk {
     }
 
     private void fetchAll() {
-        if (!needToFetch) return;
         fetchGames();
         fetchMods();
         fetchUsers();
         fetchComments();
-        needToFetch = false;
-    }
-
-    public void setNeedToFetch() {
-        this.needToFetch = true;
     }
 
     private void fetchGames() {
@@ -67,7 +66,8 @@ public class DbWrk {
 
             rs.close();
             request.close();
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            ctrl.log(e);
         }
     }
 
@@ -140,7 +140,8 @@ public class DbWrk {
 
             rs.close();
             request.close();
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            ctrl.log(e);
         }
     }
 
@@ -163,7 +164,87 @@ public class DbWrk {
 
             rs.close();
             request.close();
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            ctrl.log(e);
+        }
+    }
+
+    public ArrayList<String> getModCollectionLogs(ModCollection mc) {
+        ArrayList<String> res = new ArrayList<>();
+
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MOD_COLLECTION_LOGS1 + mc.getUser().getUsername() + DB_RQ_GET_MOD_COLLECTION_LOGS2);
+            request.setString(1, mc.getName());
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                res.add("[" + rs.getTimestamp(1).toString() + "]\n\tpath=" + rs.getString(4) + "\n\tlogo="
+                        + rs.getString(5) + "\n\tdescription=" + rs.getString(6)
+                        + "\n\tgame=" + rs.getString(7) + "\n\tmods=" + rs.getString(8));
+            }
+
+            rs.close();
+            request.close();
+            return res;
+        } catch (SQLException e) {
+            ctrl.log(e);
+            return res;
+        }
+    }
+
+    private ArrayList<Mod> getModCollectionMods(ModCollection mc) {
+        fetchMods();
+        ArrayList<Mod> res = new ArrayList<>();
+
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MOD_COLLECTIONS_MODS);
+            request.setString(1, mc.getName());
+            request.setString(2, mc.getUser().getUsername());
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                Mod m = getMod(rs.getString(1), getGame(rs.getString(2)));
+                if (m != null) res.add(m);
+            }
+
+            rs.close();
+            request.close();
+            return res;
+        } catch (SQLException e) {
+            ctrl.log(e);
+            return res;
+        }
+    }
+
+    public ArrayList<ModCollection> getModCollection(User user) {
+        try {
+            currentModCollections = new ArrayList<>();
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MOD_COLLECTIONS);
+            request.setString(1, user.getUsername());
+            ResultSet rs = jdbc.R(request);
+
+            while (rs.next()) {
+                ModCollection mc = new ModCollection(rs.getString(1), user, rs.getString(3),
+                        rs.getString(4), rs.getString(5), getGame(rs.getString(6)));
+                int i = currentModCollections.indexOf(mc);
+                if (i == -1) {
+                    currentModCollections.add(mc);
+                    i = currentModCollections.size() - 1;
+                } else {
+                    currentModCollections.set(i, mc);
+                }
+
+                for (Mod m : getModCollectionMods(mc)) {
+                    mc.addMod(m);
+                }
+            }
+
+            rs.close();
+            request.close();
+            return currentModCollections;
+        } catch (SQLException e) {
+            ctrl.log(e);
+            return currentModCollections;
         }
     }
 
@@ -186,8 +267,8 @@ public class DbWrk {
                 }
 
                 getMod(c.getMod().getName(), c.getMod().getGame()).addComment(c);
-                if(c.getUser() != null)
-                    getUser(c.getUser().getUsername()).addComment(c);
+                if (c.getAuthor() != null)
+                    getUser(c.getAuthor().getUsername()).addComment(c);
             }
 
             rs.close();
@@ -196,17 +277,11 @@ public class DbWrk {
         }
     }
 
-    private Mod getMod(String name, Game game) {
-        ArrayList<Mod> possibleMods = getMods(game);
-        for (Mod mod : possibleMods) if (mod.getName().equals(name)) return mod;
-        return null;
-    }
-
     public ArrayList<Mod> getMods(Game game) {
         fetchMods();
 
+        if (game == null) return new ArrayList<>(mods);
         ArrayList<Mod> res = new ArrayList<>();
-        if (mods.isEmpty()) return res;
 
         for (Mod mod : mods) {
             if (!mod.getGame().equals(game)) continue;
@@ -215,6 +290,16 @@ public class DbWrk {
         }
 
         return res;
+    }
+
+    private Mod getMod(String name, Game game) {
+        if (name == null || name.isBlank() || game == null) return null;
+        for (Mod m : getMods(game)) {
+            if (m.getName().equals(name))
+                return m;
+        }
+
+        return null;
     }
 
     public ArrayList<Game> getGames() {
@@ -267,7 +352,8 @@ public class DbWrk {
             int rs = jdbc.CUD(request);
             request.close();
             needToFetch = true;
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            ctrl.log(e);
         }
     }
 
@@ -281,7 +367,8 @@ public class DbWrk {
             int rs = jdbc.CUD(request);
             request.close();
             needToFetch = true;
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            ctrl.log(e);
         }
     }
 
@@ -293,8 +380,66 @@ public class DbWrk {
             int rs = jdbc.CUD(request);
             request.close();
             needToFetch = true;
-        } catch (SQLException ignored) {
+        } catch (SQLException e) {
+            ctrl.log(e);
         }
+    }
+
+    public void createModCollection(ModCollection mc) {
+        if (mc == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_CREATE_MOD_COLLECTION);
+            request.setString(1, mc.getName());
+            request.setString(2, mc.getUser().getUsername());
+            request.setString(3, mc.getRelative_path_to_folder());
+            request.setString(4, mc.getLogoUrl());
+            request.setString(5, mc.getDescription().isBlank() ? null : mc.getDescription());
+            request.setString(6, mc.getGame() == null ? null : mc.getGame().getName());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException e) {
+            ctrl.log(e);
+        }
+    }
+
+    public void deleteModCollection(ModCollection mc) {
+        if (mc == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_MOD_COLLECTION);
+            request.setString(1, mc.getName());
+            request.setString(2, mc.getUser().getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException e) {
+            ctrl.log(e);
+        }
+    }
+
+
+    private void CDModCollectionMod(Mod m, ModCollection mc, String dbRqCreateModCollectionMod) {
+        if (mc == null || m == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(dbRqCreateModCollectionMod);
+            request.setString(1, m.getName());
+            request.setString(2, m.getGame().getName());
+            request.setString(3, mc.getName());
+            request.setString(4, mc.getUser().getUsername());
+            int rs = jdbc.CUD(request);
+            request.close();
+            needToFetch = true;
+        } catch (SQLException e) {
+            ctrl.log(e);
+        }
+    }
+
+    public void addModCollectionMod(Mod m, ModCollection mc) {
+        CDModCollectionMod(m, mc, DB_RQ_CREATE_MOD_COLLECTION_MOD);
+    }
+
+    public void removeModCollectionMod(Mod m, ModCollection mc) {
+        CDModCollectionMod(m, mc, DB_RQ_DELETE_MOD_COLLECTION_MOD);
     }
 
     //TODO

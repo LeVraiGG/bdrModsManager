@@ -1,6 +1,6 @@
 package bdr.projet.beans;
 
-import bdr.projet.helpers.Transformator;
+import bdr.projet.helpers.Utilities;
 import javafx.scene.image.Image;
 
 import java.net.MalformedURLException;
@@ -25,6 +25,7 @@ public class Mod {
     public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload) throws RuntimeException {
         this(name, game, logo, description, downloadLink, nbDownload, 3);
     }
+
     public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload, double note) throws RuntimeException {
         //TODO manage version, impact, moder, dependence, comment
         if (game == null || name == null || name.isEmpty() || downloadLink == null || downloadLink.isEmpty() || nbDownload < 0)
@@ -65,7 +66,7 @@ public class Mod {
         Image defaultImage = new Image(imgPath);
         try {
             URL url = new URL(images.get(0));
-            return Transformator.internetUrlToImage(url, defaultImage);
+            return Utilities.internetUrlToImage(url, defaultImage);
         } catch (MalformedURLException e) {
             return defaultImage;
         }
@@ -86,14 +87,14 @@ public class Mod {
 
         try {
             URL url = new URL(images.get(id));
-            return Transformator.internetUrlToImage(url, defaultImage);
+            return Utilities.internetUrlToImage(url, defaultImage);
         } catch (MalformedURLException e) {
             return defaultImage;
         }
     }
 
     public void addScreenshot(String image) {
-        if(image == null || image.isEmpty()) return;
+        if (image == null || image.isEmpty()) return;
         images.add(image);
     }
 
@@ -110,7 +111,7 @@ public class Mod {
     }
 
     public void setNbDownload(int nbDownload) {
-        if(nbDownload < 0) return;
+        if (nbDownload < 0) return;
         this.nbDownload = nbDownload;
     }
 
@@ -119,7 +120,7 @@ public class Mod {
     }
 
     public void setDownloadLink(String downloadLink) {
-        if(downloadLink == null || downloadLink.isEmpty()) return;
+        if (downloadLink == null || downloadLink.isEmpty()) return;
         this.downloadLink = downloadLink;
     }
 
@@ -128,7 +129,7 @@ public class Mod {
     }
 
     public void setNote(double note) {
-        if(note > 6 || note < 0) return;
+        if (note > 6 || note < 0) return;
         this.note = note;
     }
 
@@ -137,7 +138,7 @@ public class Mod {
     }
 
     public void addComment(Comment comment) {
-        if(comment == null) return;
+        if (comment == null) return;
         this.comments = comments;
     }
 

@@ -1,10 +1,11 @@
 package bdr.projet.beans;
 
-import bdr.projet.helpers.Transformator;
+import bdr.projet.helpers.Utilities;
 import javafx.scene.image.Image;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static bdr.projet.helpers.Constantes.URL_IMG_NOT_FOUND;
@@ -38,7 +39,7 @@ public class Game {
         Image defaultImage = new Image(imgPath);
         try {
             URL url = new URL(logo);
-            return Transformator.internetUrlToImage(url, defaultImage);
+            return Utilities.internetUrlToImage(url, defaultImage);
         } catch (MalformedURLException e) {
             return defaultImage;
         }
@@ -58,5 +59,9 @@ public class Game {
     @Override
     public String toString() {
         return name;
+    }
+
+    public Path getFolder() {
+        return null;
     }
 }

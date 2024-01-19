@@ -3,20 +3,20 @@ package bdr.projet.beans;
 import java.util.Objects;
 
 public class Comment {
-    int id;
-    String content;
-    long nbLike;
-    Mod mod;
-    User user;
+    private int id;
+    private String content;
+    private long nbLike;
+    private Mod mod;
+    private User author;
 
-    public Comment(int id, String content, long nbLike, Mod mod, User user) {
+    public Comment(int id, String content, long nbLike, Mod mod, User author) {
         if (content == null || content.isEmpty() || nbLike < 0 || mod == null)
             throw new RuntimeException("Comment is invalid: " + content + ":" + nbLike + ":" + mod);
         this.id = id;
         this.content = content;
         this.nbLike = nbLike;
         this.mod = new Mod(mod); //get a copy to be sure to don't modify the original mod from here
-        this.user = user == null ? null : new User(user); //same
+        this.author = author == null ? null : new User(author); //same
     }
 
     public int getId() {
@@ -54,12 +54,12 @@ public class Comment {
         this.mod = new Mod(mod);
     }
 
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user == null ? null : new User(user);
+    public void setAuthor(User author) {
+        this.author = author == null ? null : new User(author);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "[" + user == null ? "Deleted Account" : user + "]\n" +
+        return "[" + author == null ? "Deleted Account" : author + "]\n" +
                 content;
     }
 }

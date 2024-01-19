@@ -1,6 +1,5 @@
 package bdr.projet.helpers;
 
-import bdr.projet.beans.Comment;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -11,10 +10,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 
 import com.google.common.hash.Hashing;
 
-public class Transformator {
+public class Utilities {
     public static Image internetUrlToImage(URL url, Image defaultImage) {
         try {
             BufferedImage i = ImageIO.read(url);
@@ -34,5 +36,13 @@ public class Transformator {
         ArrayList<String> res = new ArrayList<>();
         for (int i = 0; i < objects.size(); ++i) res.add(objects.toString());
         return res;
+    }
+
+    public static String getDate(TemporalAccessor date) {
+        return DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(date == null ? LocalDateTime.now() : date);
+    }
+
+    public static String getNow() {
+        return getDate(null);
     }
 }
