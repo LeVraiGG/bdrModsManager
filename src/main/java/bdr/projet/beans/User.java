@@ -38,8 +38,18 @@ public class User {
         this.password = password;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    /**
+     * Sorry for this troll name :)
+     * NB: Set admin to false
+     */
+    public void itSTooMuchResponsibilitySorry(){
+        isAdmin = false;
+    }
+
+    public void setAdmin(User admin) {
+        if(admin == null || !admin.isAdmin()) return;
+        isAdmin = true;
+
     }
 
     @Override

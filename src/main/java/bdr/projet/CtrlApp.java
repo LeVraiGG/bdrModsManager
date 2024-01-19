@@ -3,9 +3,11 @@ package bdr.projet;
 import bdr.projet.helpers.Utilities;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -45,13 +47,17 @@ public class CtrlApp {
     @FXML
     private Menu m_user;
     @FXML
+    private MenuItem mi_connect;
+    @FXML
     private MenuItem mi_change;
+    @FXML
+    private MenuItem mi_noAdmin;
     @FXML
     private MenuItem mi_disconnect;
     @FXML
     private MenuItem mi_delete;
     @FXML
-    private TabPane tp;
+    private TabPane tp_main;
     @FXML
     private TabPane tp_logs;
     @FXML
@@ -97,6 +103,7 @@ public class CtrlApp {
     private User connectedUser;
 
     public void initialize() {
+        setUI();
         setCSS();
     }
 
@@ -150,6 +157,12 @@ public class CtrlApp {
         m_user.setText("Connected as : " + connectedUser);
         log("Connected as : " + connectedUser);
 
+        setUI();
+    }
+
+    private void setConnectedUI() {
+        if(connectedUser == null) return; //Just a security check
+
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
 
@@ -158,7 +171,7 @@ public class CtrlApp {
             lv_mods.getItems().setAll(db.getMods(gameSelected));
             imv_game.setImage(gameSelected.getLogo());
         });
-        cmb_game.setValue(cmb_game.getItems().get(0)); //don't need to check if empty because our app, without game on db is just a nonsense
+        cmb_game.setValue(cmb_game.getItems().getFirst()); //don't need to check if empty because our app, without game on db is just a nonsense
 
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
@@ -187,43 +200,71 @@ public class CtrlApp {
             lv_mods_available.getItems().setAll(modAvailable);
         });
         if (!cmb_mod_collections.getItems().isEmpty())
-            cmb_mod_collections.setValue(cmb_mod_collections.getItems().get(0));
+            cmb_mod_collections.setValue(cmb_mod_collections.getItems().getFirst());
 
 
         //Update tabs
         t_home.setDisable(false);
         t_collections.setDisable(false);
-        //t_manage.setDisable(false);
-        if(connectedUser.isAdmin()) {
-            t_logs_general.setDisable(false);
-            tf_logs_general.setVisible(true);
-        }
+        boolean allowed = connectedUser.isAdmin();
+        t_manage.setDisable(!allowed);
+        t_logs.setDisable(false);
+        t_logs_general.setDisable(!allowed);
+        tf_logs_general.setVisible(allowed);
+
         t_logs_user.setDisable(false);
 
-        mi_change.setDisable(false);
-        mi_disconnect.setDisable(false);
-        mi_delete.setDisable(false);
+        mi_connect.setVisible(false);
+        mi_change.setVisible(true);
+        mi_noAdmin.setVisible(allowed);
+        mi_disconnect.setVisible(true);
+        mi_delete.setVisible(true);
 
-        tp.getSelectionModel().select(t_home);
+        tp_main.getSelectionModel().select(t_home);
+
+        //setCSSOnConnect();
     }
 
     @FXML
     protected void disconnect() {
+        disconnectDb();
+        connectedUser = null;
+
+        setUI();
+
+        log(MSG_USER_DISCONNECT);
+    }
+
+    private void setUI() {
+        mb.setOnMouseMoved(e->{
+            m_user.hide();
+        });
+
+        if(connectedUser == null) setDisconnectedUI();
+        else setConnectedUI();
+    }
+
+    private void setDisconnectedUI() {
+        tp_main.getSelectionModel().select(t_logs);
         t_home.setDisable(true);
         t_collections.setDisable(true);
-        //t_manage.setDisable(true);
+        t_manage.setDisable(true);
+        tp_logs.getSelectionModel().select(t_logs_user);
         t_logs_general.setDisable(true);
         tf_logs_general.setVisible(false);
-        tp.getSelectionModel().select(t_logs);
+        t_logs_user.setDisable(true);
         tf_logs_user.setDisable(true);
+        t_logs.setDisable(true);
 
-        mi_change.setDisable(true);
-        mi_disconnect.setDisable(true);
-        mi_delete.setDisable(true);
+        mi_connect.setVisible(true);
+        mi_change.setVisible(false);
+        mi_noAdmin.setVisible(false);
+        mi_disconnect.setVisible(false);
+        mi_delete.setVisible(false);
 
         m_user.setText("");
-        connectedUser = null;
-        log(MSG_USER_DISCONNECT);
+
+        //setCSSOnDisconnect();
     }
 
     @FXML
@@ -231,6 +272,14 @@ public class CtrlApp {
         String password = Popups.askText("Connection", "Step 3", MSG_USER_CONNECTION_STEP3);
         connectedUser.setPassword(Utilities.encryptSHA256(password));
         db.updateUser(connectedUser);
+    }
+
+    @FXML
+    protected void setNotAdmin() {
+        if (!m_user.getText().contains("Click")) return;
+        connectedUser.itSTooMuchResponsibilitySorry();
+        db.updateUser(connectedUser);
+        setUI();
     }
 
     @FXML
@@ -259,7 +308,7 @@ public class CtrlApp {
         db.deleteModCollection(mc);
         if (!db.getModCollection(connectedUser).contains(mc)) {
             cmb_mod_collections.getItems().remove(mc);
-            if(!cmb_mod_collections.getItems().isEmpty()) cmb_mod_collections.getSelectionModel().select(0);
+            if (!cmb_mod_collections.getItems().isEmpty()) cmb_mod_collections.getSelectionModel().select(0);
         }
     }
 
@@ -268,7 +317,7 @@ public class CtrlApp {
         ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
         Mod m = lv_mods_available.getSelectionModel().getSelectedItem();
         mc.addMod(m);
-        if(mc.getMods().contains(m)) { //should be always true but w/e
+        if (mc.getMods().contains(m)) { //should be always true but w/e
             db.addModCollectionMod(m, mc);
             lv_mod_collection_mods.getItems().add(m);
             lv_mods_available.getItems().remove(m);
@@ -280,7 +329,7 @@ public class CtrlApp {
         ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
         Mod m = lv_mod_collection_mods.getSelectionModel().getSelectedItem();
         mc.removeMod(m);
-        if(!mc.getMods().contains(m)) { //should be always true but w/e
+        if (!mc.getMods().contains(m)) { //should be always true but w/e
             db.removeModCollectionMod(m, mc);
             lv_mod_collection_mods.getItems().remove(m);
             lv_mods_available.getItems().add(m);
@@ -293,10 +342,10 @@ public class CtrlApp {
                 new ArrayList<>(cmb_mod_collections.getItems()));
         ArrayList<String> logs = db.getModCollectionLogs(mc);
         tf_logs_user.getChildren().clear();
-        for(String log : logs.reversed())
+        for (String log : logs.reversed())
             tf_logs_user.getChildren().addFirst(new Text(log + "\n"));
         tp_logs.getSelectionModel().select(t_logs_user);
-        tp.getSelectionModel().select(t_logs);
+        tp_main.getSelectionModel().select(t_logs);
 
     }
 
@@ -331,13 +380,13 @@ public class CtrlApp {
          */
         //TODO clean up
         //set id
-        ap_main.setId("ap.main");
+        ap_main.setId("ap-main");
         mb.setId("mb");
         m_user.setId("m-user");
         mi_change.setId("mi-change");
         mi_disconnect.setId("mi-disconnect");
         mi_delete.setId("mi-delete");
-        tp.setId("tp");
+        tp_main.setId("tp-main");
         t_home.setId("t-home");
         t_collections.setId("t-collections");
         t_manage.setId("t-manage");
@@ -362,7 +411,18 @@ public class CtrlApp {
         ap_collection_vbox.getStyleClass().add("ap");
         ap_manage.getStyleClass().add("ap");
         ap_logs.getStyleClass().add("ap");
+
+        //setCSSOnDisconnect();
     }
+
+    /*
+    private void setCSSOnConnect() {
+        m_user.getStyleClass().add("whenConnected");
+    }
+
+    private void setCSSOnDisconnect() {
+        m_user.getStyleClass().remove("whenConnected");
+    }*/
 
     /**
      * try to connect to db and log result
@@ -379,10 +439,13 @@ public class CtrlApp {
     }
 
     void disconnectDb() {
+        if(jdbc == null) return;
         try {
-            jdbc.disconnect();
-            log(MSG_DB_DISCONNECT);
-        } catch (SQLException e) {
+            if(jdbc.isConnect()) {
+                jdbc.disconnect();
+                log(MSG_DB_DISCONNECT);
+            }
+        } catch (SQLException | NullPointerException e) {
             log(MSG_DB_DISCONNECT);
             log(e);
         } finally {

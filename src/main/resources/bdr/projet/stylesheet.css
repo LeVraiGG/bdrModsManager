@@ -29,10 +29,6 @@
 
 }
 
-#m-user:hover {
-    -fx-opacity: 0;
-}
-
 #m-user .label {
     -fx-font-weight: bold;
     -fx-text-fill: green;
@@ -50,7 +46,7 @@
 
 }
 
-#tp {
+#tp-main {
     -fx-background-color: #414141;
 
 }
