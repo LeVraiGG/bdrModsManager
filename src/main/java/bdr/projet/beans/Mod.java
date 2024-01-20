@@ -28,7 +28,7 @@ public class Mod {
     }
 
     public Mod(String name, Game game, String logo, String description, String downloadLink, int nbDownload, double note) throws RuntimeException {
-        //TODO manage version, impact, moder, dependence, comment
+        //TODO manage version, impact, moder, dependence
         if (game == null || name == null || name.isEmpty() || downloadLink == null || downloadLink.isEmpty() || nbDownload < 0)
             throw new RuntimeException("Mod is invalid: " + game + ":" + name + ":" + downloadLink + ":" + nbDownload);
         this.name = name;

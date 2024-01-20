@@ -77,7 +77,7 @@ public class Comment {
 
     @Override
     public String toString() {
-        return "[" + author == null ? "Deleted Account" : author + "]\n" +
+        return "[" + (author == null ? "Deleted Account" : author) + "]\n\t" +
                 content;
     }
 }

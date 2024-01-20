@@ -51,5 +51,6 @@ public class Constantes {
     public final static String DB_RQ_CREATE_MOD_COLLECTION_MOD = "INSERT INTO mod_mod_collection VALUES (?, ?, ?, ?);";
     public final static String DB_RQ_DELETE_MOD_COLLECTION_MOD = "DELETE FROM mod_mod_collection WHERE fk_mod_name=? AND fk_mod_game_name=? AND fk_mod_collection_name=? AND fk_mod_collection_user_name=?;";
     public final static String DB_RQ_GET_COMMENTS = "SELECT * FROM comment;";
+    public final static String DB_RQ_CREATE_COMMENT = "INSERT INTO comment (content, fk_mod_name, fk_mod_game_name, fk_user) VALUES (?, ?, ?, ?);";
 
 }

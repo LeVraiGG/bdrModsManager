@@ -104,6 +104,9 @@ public class CtrlApp {
     private PostgesqlJDBC jdbc;
     private DbWrk db;
     private User connectedUser;
+    private Game gameSelected;
+    private Mod modSelected;
+    private ModCollection modCollectionSelected;
 
     public void initialize() {
         setUI();
@@ -166,11 +169,14 @@ public class CtrlApp {
     private void setConnectedUI() {
         if (connectedUser == null) return; //Just a security check
 
+        db.fetchAll();
+
         /*Games*/
         cmb_game.getItems().setAll(db.getGames());
 
         cmb_game.setOnAction(actionEvent -> {
-            Game gameSelected = cmb_game.getSelectionModel().getSelectedItem();
+            db.fetchAll();
+            gameSelected = cmb_game.getSelectionModel().getSelectedItem();
             lv_mods.getItems().setAll(db.getMods(gameSelected));
             if (lv_mods.getItems().isEmpty()) {
                 t_mod_description.setDisable(true);
@@ -179,11 +185,12 @@ public class CtrlApp {
 
             imv_game.setImage(gameSelected.getLogo());
         });
-        cmb_game.setValue(cmb_game.getItems().getFirst()); //don't need to check if empty because our app, without game on db is just a nonsense
+        cmb_game.setValue(gameSelected != null ? gameSelected : cmb_game.getItems().getFirst()); //don't need to check if empty because our app, without game on db is just a nonsense
 
         /*Mods*/
         lv_mods.setOnMouseClicked(mouseEvent -> {
-            Mod modSelected = lv_mods.getSelectionModel().getSelectedItem();
+            db.fetchAll();
+            modSelected = lv_mods.getSelectionModel().getSelectedItem();
             if (modSelected == null) {
                 t_mod_description.setDisable(true);
                 t_mod_comments.setDisable(true);
@@ -203,7 +210,7 @@ public class CtrlApp {
                     new Text(modSelected.getDescription() + "\nUsers noted this mod " + modSelected.getNote() + "/6\nDownload at: "),
                     new Hyperlink(modSelected.getDownloadLink()));
             ArrayList<Text> t = new ArrayList<>();
-            for (Comment c : modSelected.getComments()) t.add(new Text(c.toString()));
+            for (Comment c : modSelected.getComments()) t.add(new Text(c.toString() + "\n"));
             tf_mod_comments.getChildren().setAll(t.reversed());
 
             imv_mod.setImage(modSelected.getLogo());
@@ -213,7 +220,8 @@ public class CtrlApp {
         cmb_mod_collections.getItems().setAll(db.getModCollection(connectedUser));
 
         cmb_mod_collections.setOnAction(actionEvent -> {
-            ModCollection modCollectionSelected = cmb_mod_collections.getSelectionModel().getSelectedItem();
+            db.fetchAll();
+            modCollectionSelected = cmb_mod_collections.getSelectionModel().getSelectedItem();
             lv_mod_collection_mods.getItems().setAll(modCollectionSelected.getMods());
             ArrayList<Mod> modAvailable = new ArrayList<>();
             for (Mod m : db.getMods(modCollectionSelected.getGame())) {
@@ -222,7 +230,7 @@ public class CtrlApp {
             lv_mods_available.getItems().setAll(modAvailable);
         });
         if (!cmb_mod_collections.getItems().isEmpty())
-            cmb_mod_collections.setValue(cmb_mod_collections.getItems().getFirst());
+            cmb_mod_collections.setValue(modCollectionSelected != null ? modCollectionSelected : cmb_mod_collections.getItems().getFirst());
 
 
         //Update tabs
@@ -267,6 +275,10 @@ public class CtrlApp {
     }
 
     private void setDisconnectedUI() {
+        modCollectionSelected = null;
+        modSelected = null;
+        gameSelected = null;
+
         tp_main.getSelectionModel().select(t_logs);
         t_home.setDisable(true);
         t_collections.setDisable(true);
@@ -321,26 +333,28 @@ public class CtrlApp {
         if (db.getModCollection(connectedUser).contains(mc)) {
             cmb_mod_collections.getItems().add(mc);
             cmb_mod_collections.getSelectionModel().select(mc);
+            modCollectionSelected = mc;
         }
     }
 
     @FXML
     protected void deleteCollection() {
-        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
-        db.deleteModCollection(mc);
-        if (!db.getModCollection(connectedUser).contains(mc)) {
-            cmb_mod_collections.getItems().remove(mc);
-            if (!cmb_mod_collections.getItems().isEmpty()) cmb_mod_collections.getSelectionModel().select(0);
+        db.deleteModCollection(modCollectionSelected);
+        if (!db.getModCollection(connectedUser).contains(modCollectionSelected)) {
+            cmb_mod_collections.getItems().remove(modCollectionSelected);
+            if (!cmb_mod_collections.getItems().isEmpty()) {
+                cmb_mod_collections.getSelectionModel().select(0);
+                modCollectionSelected = cmb_mod_collections.getSelectionModel().getSelectedItem();
+            }
         }
     }
 
     @FXML
     protected void addSelectedMod() {
-        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
         Mod m = lv_mods_available.getSelectionModel().getSelectedItem();
-        mc.addMod(m);
-        if (mc.getMods().contains(m)) { //should be always true but w/e
-            db.addModCollectionMod(m, mc);
+        modCollectionSelected.addMod(m);
+        if (modCollectionSelected.getMods().contains(m)) { //should be always true but w/e
+            db.addModCollectionMod(m, modCollectionSelected);
             lv_mod_collection_mods.getItems().add(m);
             lv_mods_available.getItems().remove(m);
         }
@@ -348,11 +362,10 @@ public class CtrlApp {
 
     @FXML
     protected void removeSelectedMod() {
-        ModCollection mc = cmb_mod_collections.getSelectionModel().getSelectedItem();
         Mod m = lv_mod_collection_mods.getSelectionModel().getSelectedItem();
-        mc.removeMod(m);
-        if (!mc.getMods().contains(m)) { //should be always true but w/e
-            db.removeModCollectionMod(m, mc);
+        modCollectionSelected.removeMod(m);
+        if (!modCollectionSelected.getMods().contains(m)) { //should be always true but w/e
+            db.removeModCollectionMod(m, modCollectionSelected);
             lv_mod_collection_mods.getItems().remove(m);
             lv_mods_available.getItems().add(m);
         }
@@ -360,7 +373,13 @@ public class CtrlApp {
 
     @FXML
     protected void comment() {
-        //TODO
+        String content = Popups.askText("Add comment", "Comment:", "Indicate the comment you want to add.");
+        Comment c = new Comment(-1, content, 0, modSelected, connectedUser);
+        connectedUser.addComment(c);
+        modSelected.addComment(c);
+        db.addComment(c);
+        db.fetchAll();
+        setUI();
     }
 
     @FXML

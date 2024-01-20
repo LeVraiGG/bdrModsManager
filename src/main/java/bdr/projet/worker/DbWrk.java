@@ -21,8 +21,6 @@ public class DbWrk {
     ArrayList<ModCollection> currentModCollections;
     ArrayList<Comment> comments;
 
-    boolean needToFetch = true;
-
     public DbWrk(PostgesqlJDBC jdbc, CtrlApp ctrl) throws RuntimeException {
         if (jdbc == null || !jdbc.isConnect() || ctrl == null) throw new RuntimeException(MSG_EX_JDBC_INVALID);
         this.jdbc = jdbc;
@@ -36,7 +34,7 @@ public class DbWrk {
         fetchAll();
     }
 
-    private void fetchAll() {
+    public void fetchAll() {
         fetchGames();
         fetchMods();
         fetchUsers();
@@ -108,8 +106,6 @@ public class DbWrk {
     }
 
     private void fetchMods() {
-        fetchGames();
-
         try {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_GET_MODS);
             ResultSet rs = jdbc.R(request);
@@ -263,8 +259,7 @@ public class DbWrk {
                 }
 
                 getMod(c.getMod().getName(), c.getMod().getGame()).addComment(c);
-                if (c.getAuthor() != null)
-                    getUser(c.getAuthor().getUsername()).addComment(c);
+                if (c.getAuthor() != null) getUser(c.getAuthor().getUsername()).addComment(c);
             }
 
             rs.close();
@@ -274,15 +269,11 @@ public class DbWrk {
     }
 
     public ArrayList<Mod> getMods(Game game) {
-        fetchMods();
-
-        if (game == null) return new ArrayList<>(mods);
         ArrayList<Mod> res = new ArrayList<>();
 
         for (Mod mod : mods) {
             if (!mod.getGame().equals(game)) continue;
-            Mod newMod = new Mod(mod); //deep copy because only dbWrk should be able to modify mods ArrayList
-            res.add(newMod);
+            res.add(mod);
         }
 
         return res;
@@ -299,41 +290,19 @@ public class DbWrk {
     }
 
     public ArrayList<Game> getGames() {
-        fetchGames();
-
-        ArrayList<Game> res = new ArrayList<>();
-        if (games.isEmpty()) return res;
-
-        for (Game game : games) {
-            Game newGame = new Game(game); //deep copy because only dbWrk should be able to modify games ArrayList
-            res.add(newGame);
-        }
-
-        return res;
+        return games;
     }
 
     private Game getGame(String name) {
-        fetchGames();
         for (Game game : games) if (game.getName().equals(name)) return game;
         return null;
     }
 
     public ArrayList<User> getUsers() {
-        fetchUsers();
-
-        ArrayList<User> res = new ArrayList<>();
-        if (users.isEmpty()) return res;
-
-        for (User user : users) {
-            User newUser = new User(user); //deep copy because only dbWrk should be able to modify users ArrayList
-            res.add(newUser);
-        }
-
-        return res;
+        return users;
     }
 
     private User getUser(String username) {
-        fetchUsers();
         for (User user : users) if (user.getUsername().equals(username)) return user;
         return null;
     }
@@ -345,9 +314,8 @@ public class DbWrk {
             request.setString(1, user.getUsername());
             request.setString(2, user.getPassword());
             request.setBoolean(3, user.isAdmin());
-            int rs = jdbc.CUD(request);
+            jdbc.CUD(request);
             request.close();
-            needToFetch = true;
         } catch (SQLException e) {
             ctrl.log(e);
         }
@@ -360,9 +328,8 @@ public class DbWrk {
             request.setString(1, user.getPassword());
             request.setBoolean(2, user.isAdmin());
             request.setString(3, user.getUsername());
-            int rs = jdbc.CUD(request);
+            jdbc.CUD(request);
             request.close();
-            needToFetch = true;
         } catch (SQLException e) {
             ctrl.log(e);
         }
@@ -373,9 +340,8 @@ public class DbWrk {
         try {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_USER);
             request.setString(1, user.getUsername());
-            int rs = jdbc.CUD(request);
+            jdbc.CUD(request);
             request.close();
-            needToFetch = true;
         } catch (SQLException e) {
             ctrl.log(e);
         }
@@ -391,9 +357,8 @@ public class DbWrk {
             request.setString(4, mc.getLogoUrl());
             request.setString(5, mc.getDescription().isBlank() ? null : mc.getDescription());
             request.setString(6, mc.getGame() == null ? null : mc.getGame().getName());
-            int rs = jdbc.CUD(request);
+            jdbc.CUD(request);
             request.close();
-            needToFetch = true;
         } catch (SQLException e) {
             ctrl.log(e);
         }
@@ -405,9 +370,8 @@ public class DbWrk {
             PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_DELETE_MOD_COLLECTION);
             request.setString(1, mc.getName());
             request.setString(2, mc.getUser().getUsername());
-            int rs = jdbc.CUD(request);
+            jdbc.CUD(request);
             request.close();
-            needToFetch = true;
         } catch (SQLException e) {
             ctrl.log(e);
         }
@@ -422,9 +386,8 @@ public class DbWrk {
             request.setString(2, m.getGame().getName());
             request.setString(3, mc.getName());
             request.setString(4, mc.getUser().getUsername());
-            int rs = jdbc.CUD(request);
+            jdbc.CUD(request);
             request.close();
-            needToFetch = true;
         } catch (SQLException e) {
             ctrl.log(e);
         }
@@ -436,6 +399,21 @@ public class DbWrk {
 
     public void removeModCollectionMod(Mod m, ModCollection mc) {
         CDModCollectionMod(m, mc, DB_RQ_DELETE_MOD_COLLECTION_MOD);
+    }
+
+    public void addComment(Comment c) {
+        if(c == null) return;
+        try {
+            PreparedStatement request = jdbc.getPrepareStatement(DB_RQ_CREATE_COMMENT);
+            request.setString(1, c.getContent());
+            request.setString(2, c.getMod().getName());
+            request.setString(3, c.getMod().getGame().getName());
+            request.setString(4, c.getAuthor().getUsername());
+            jdbc.CUD(request);
+            request.close();
+        } catch (SQLException e) {
+            ctrl.log(e);
+        }
     }
 
     //TODO
