@@ -425,32 +425,8 @@ public class CtrlApp {
             with id:
                 l_welcome.setId("custom-css-id");
          */
-        //TODO clean up
         //set id
-        ap_main.setId("ap-main");
-        mb.setId("mb");
         m_user.setId("m-user");
-        mi_change.setId("mi-change");
-        mi_disconnect.setId("mi-disconnect");
-        mi_delete.setId("mi-delete");
-        tp_main.setId("tp-main");
-        t_home.setId("t-home");
-        t_collections.setId("t-collections");
-        t_manage.setId("t-manage");
-        t_logs.setId("t-logs");
-        t_mod_description.setId("t-mod-description");
-        t_mod_comments.setId("t-mod-comments");
-        tf_logs_general.setId("tf-logs-general");
-        tf_logs_user.setId("tf-logs-user");
-        l_mods.setId("l-mods");
-        lv_mods.setId("lv-mods");
-        lv_mod.setId("lv-mod");
-        tf_mod_description.setId("tf-mod-description");
-        tf_mod_comments.setId("tf-mod-comments");
-        imv_mod.setId("imv-mod");
-        imv_game.setId("imv-game");
-        l_games.setId("l-mods");
-        cmb_game.setId("cmb-games");
 
         //set classes
         ap_main.getStyleClass().add("ap");
